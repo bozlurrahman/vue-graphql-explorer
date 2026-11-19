@@ -10,7 +10,10 @@ import type { FetcherParams, FetcherOpts } from '../../src/index';
 
 const schema = buildSchema(`
   type Tag { label: String }
-  type Query { tags: [Tag!]! }
+  type Query {
+    """<img src="x" onerror="window.__xss = 1">**Tags**"""
+    tags: [Tag!]!
+  }
 `);
 
 function mockFetcher() {
@@ -121,6 +124,22 @@ describe(`<GraphqlExplorer> on Vue ${vueMajor}`, () => {
     await button.trigger('click');
     await settle();
     expect(visible()).toBe(false);
+  });
+});
+
+describe('untrusted schema text', () => {
+  it('shows a description with HTML as text, never as markup', async () => {
+    const wrapper = await mountWith({ url: '/graphql', fetcher: mockFetcher(), defaultQuery: '{ tags { label } }' });
+    await wrapper.find('button[aria-label="Documentation"]').trigger('click');
+    await settle();
+    await wrapper.find('.graphiql-plugin a.graphiql-doc-explorer-type-name').trigger('click'); // Query
+    await settle();
+
+    const docs = wrapper.find('.graphiql-plugin');
+    expect(docs.text()).toContain('<img src="x"');
+    expect(docs.find('img').exists()).toBe(false);
+    expect(docs.html()).toContain('<strong>Tags</strong>');
+    expect((window as any).__xss).toBeUndefined();
   });
 });
 

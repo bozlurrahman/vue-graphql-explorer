@@ -40,7 +40,6 @@ const values = computed<GraphQLEnumValue[]>(() => {
       result.push(value);
     }
   }
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   deprecatedValues.value = deprecated;
   return result;
 });

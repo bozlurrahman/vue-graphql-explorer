@@ -130,6 +130,7 @@ const toggleEditorTools = () => {
           :active="pluginStore.visiblePlugin === plugin"
           @click="pluginStore.visiblePlugin = pluginStore.visiblePlugin === plugin ? null : plugin"
         >
+          <!-- eslint-disable-next-line vue/no-v-html -- static SVG icon bundled with the package -->
           <span v-html="plugin.icon" />
         </ToolbarButton>
       </div>

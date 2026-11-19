@@ -1,10 +1,12 @@
 <!-- components/gql/doc/MarkdownContent.vue -->
 <template>
+  <!-- eslint-disable-next-line vue/no-v-html -- renderMarkdown escapes all HTML first (src/lib/markdown.ts) -->
   <div :class="computedClass" v-html="renderedMarkdown" />
 </template>
 
 <script setup lang="ts">
 import { clsx } from '../../lib/clsx';
+import { renderMarkdown } from '../../lib/markdown';
 import { computed } from 'vue-demi';
 
 const props = defineProps<{
@@ -17,7 +19,8 @@ const computedClass = computed(() =>
   clsx(`graphiql-markdown-${props.type}`, props.onlyShowFirstChild ? 'graphiql-markdown-preview' : ''),
 );
 
-const renderedMarkdown = computed(() => props.markdown);
+// Descriptions come from the server: renderMarkdown escapes all HTML before it adds its own tags.
+const renderedMarkdown = computed(() => renderMarkdown(props.markdown));
 </script>
 <style>
 /**

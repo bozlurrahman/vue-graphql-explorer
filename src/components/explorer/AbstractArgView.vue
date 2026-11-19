@@ -393,10 +393,12 @@ const emptyValueNode = {} as ValueNode;
   >
     <span class="arg-toggler" @click="toggleArg">
       <template v-if="isInputObjectType(argType)">
+        <!-- eslint-disable vue/no-v-html -- static SVG arrows from the style config -->
         <span
           style="display: inline"
           v-html="argValue ? ctx.styleConfig.value.arrowOpen : ctx.styleConfig.value.arrowClosed"
         />
+        <!-- eslint-enable vue/no-v-html -->
       </template>
       <template v-else>
         <Checkbox :checked="!!argValue" :style-config="ctx.styleConfig.value" style="margin-right: 4px" />

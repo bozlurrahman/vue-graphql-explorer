@@ -2,6 +2,7 @@
 <template>
   <div>
     <div class="graphiql-doc-explorer-section-title">
+      <!-- eslint-disable-next-line vue/no-v-html -- static SVG icon bundled with the package -->
       <div v-html="icon" />
       {{ title }}
     </div>

@@ -11,6 +11,7 @@
       @mouseleave="displayFieldActions = false"
     >
       <span v-if="isObjectType(type)">
+        <!-- eslint-disable-next-line vue/no-v-html -- static SVG arrows from the style config -->
         <div v-html="selection ? ctx.styleConfig.value.arrowOpen : ctx.styleConfig.value.arrowClosed"></div>
       </span>
       <Checkbox v-else :checked="!!selection" :style-config="ctx.styleConfig.value" />

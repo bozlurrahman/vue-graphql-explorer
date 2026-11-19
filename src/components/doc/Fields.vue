@@ -47,7 +47,6 @@ const fields = computed<ExplorerFieldDef[]>(() => {
       result.push(field);
     }
   }
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   deprecatedFields.value = deprecated;
   return result;
 });

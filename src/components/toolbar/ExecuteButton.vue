@@ -38,7 +38,9 @@ const toggle = () => {
       :title="isRunning ? 'Stop execution' : 'Execute query (Ctrl+Enter)'"
       @click="toggle"
     >
+      <!-- eslint-disable-next-line vue/no-v-html -- static SVG icon bundled with the package -->
       <div v-if="isRunning" v-html="StopIcon"></div>
+      <!-- eslint-disable-next-line vue/no-v-html -- static SVG icon bundled with the package -->
       <div v-else v-html="PlayIcon"></div>
     </button>
     <div v-if="showDropdown && editorStore.activeOperations.length > 1" class="dropdown-menu">

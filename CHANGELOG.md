@@ -6,6 +6,21 @@ contain breaking changes; they are listed under **Breaking**.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-19
+
+### Security
+
+- Schema descriptions and deprecation reasons in the documentation explorer were inserted as raw HTML. A GraphQL
+  server whose schema text contains markup (for example `<img onerror=...>`) could run script in the host page.
+  They are now escaped, and only a small markdown subset (paragraphs, code, bold, italic, http(s)/mailto links)
+  is rendered. `vue/no-v-html` is now a lint error, with a stated reason at each remaining use (static icons).
+
+### Changed
+
+- CI uses `actions/checkout@v5` and `actions/setup-node@v5` (Node 24).
+- Lint: Prettier owns template layout; `vue/max-attributes-per-line` and
+  `vue/singleline-html-element-content-newline` are off. Lint reports no warnings.
+
 ## [0.1.0] - 2026-11-19
 
 First public release.
@@ -42,5 +57,6 @@ First public release.
 - Importing the package and server-side rendering do not touch `window`, `document` or `localStorage`. When the
   browser blocks storage, the explorer keeps its state in memory.
 
-[Unreleased]: https://github.com/bozlurrahman/vue-graphql-explorer/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/bozlurrahman/vue-graphql-explorer/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/bozlurrahman/vue-graphql-explorer/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bozlurrahman/vue-graphql-explorer/releases/tag/v0.1.0

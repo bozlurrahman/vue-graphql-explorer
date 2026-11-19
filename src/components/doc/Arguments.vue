@@ -41,7 +41,6 @@ const args = computed<GraphQLArgument[]>(() => {
       }
     }
   }
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
   deprecatedArgs.value = deprecated;
   return result;
 });

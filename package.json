@@ -1,6 +1,6 @@
 {
   "name": "vue-graphql-explorer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GraphiQL-style GraphQL explorer component for Vue 2.7 and Vue 3",
   "license": "MIT",
   "author": "Bozlur Rahman",

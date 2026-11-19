@@ -18,6 +18,11 @@ export default tseslint.config(
     rules: {
       // Same relaxations as intelli-app-operations/nuxt/eslint.config.mjs.
       'vue/html-self-closing': 'off',
+      // Prettier owns template layout (printWidth 120); these two rules contradict it.
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      // Raw HTML is an XSS sink: each use needs a disable comment saying why its content is safe.
+      'vue/no-v-html': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-dynamic-delete': 'off',
       // Internal component names (Button, Tabs, Field) are never registered globally.
