@@ -41,6 +41,7 @@ onBeforeUnmount(() => {
             <input v-model="persistHeaders" type="checkbox" />
             Persist Headers
           </label>
+          <p class="hint">Credential headers (Authorization, Cookie, tokens, keys) are never saved.</p>
 
           <div class="actions">
             <button @click="save">Save</button>
@@ -58,6 +59,11 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
 .dialog-overlay {
   position: fixed;
   inset: 0;

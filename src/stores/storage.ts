@@ -53,7 +53,13 @@ function storageStoreSetup() {
       return;
     }
 
-    localStorage.setItem(key(keyName), JSON.stringify(value));
+    try {
+      localStorage.setItem(key(keyName), JSON.stringify(value));
+    } catch (error) {
+      // Quota exceeded or storage blocked: report instead of throwing (history drops old items and retries).
+      const isQuotaError = error instanceof DOMException && error.name === 'QuotaExceededError';
+      return { error: true, isQuotaError };
+    }
   }
 
   function remove(keyName: string) {

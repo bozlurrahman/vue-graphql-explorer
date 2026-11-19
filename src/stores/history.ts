@@ -1,5 +1,6 @@
 // nuxt/lib/history.ts
 import { parse } from 'graphql';
+import { stripCredentialHeaders } from '../lib/credentials';
 import { defineExplorerStore, type ExplorerStore } from './registry';
 import { computed, markRaw, ref } from 'vue-demi';
 import { useStorageStore } from './storage';
@@ -45,7 +46,9 @@ function historyStoreSetup() {
 
   // ==================== Public API ====================
 
-  const addToHistory = ({ query, variables, headers, operationName }: QueryStoreItem) => {
+  const addToHistory = ({ query, variables, headers: rawHeaders, operationName }: QueryStoreItem) => {
+    // Credential headers never enter history (it is stored in localStorage).
+    const headers = stripCredentialHeaders(rawHeaders) ?? undefined;
     if (!shouldSaveQuery(query, variables, headers, historyStorage.fetchRecent())) {
       return;
     }
@@ -109,16 +112,19 @@ export const useHistoryStore: () => ExplorerStore<ReturnType<typeof historyStore
 
 // ==================== Reusable Query Storage Logic ====================
 
+function withoutCredentials(item: QueryStoreItem): QueryStoreItem {
+  return { ...item, headers: stripCredentialHeaders(item.headers) ?? undefined };
+}
+
 const createQueryStorage = (key: string, maxSize: number | null = null) => {
   const items = ref<QueryStoreItem[]>([]);
   const storage = useStorageStore();
   const load = () => {
     const raw = storage.get(key);
-    if (raw) {
-      items.value = JSON.parse(String(raw))[key] || [];
-    } else {
-      items.value = [];
-    }
+    const stored: QueryStoreItem[] = raw ? JSON.parse(String(raw))[key] || [] : [];
+    items.value = stored.map(withoutCredentials);
+    // History written before EXP-06 may hold credential headers: rewrite it without them.
+    if (stored.some((item, i) => item.headers !== items.value[i].headers)) save();
   };
 
   const save = () => {
@@ -126,7 +132,7 @@ const createQueryStorage = (key: string, maxSize: number | null = null) => {
   };
 
   const push = (item: QueryStoreItem) => {
-    const newItems = [...items.value, item];
+    const newItems = [...items.value, withoutCredentials(item)];
 
     if (maxSize && newItems.length > maxSize) {
       newItems.shift();
@@ -147,6 +153,7 @@ const createQueryStorage = (key: string, maxSize: number | null = null) => {
   };
 
   const edit = (item: QueryStoreItem, index?: number) => {
+    item = withoutCredentials(item);
     if (typeof index === 'number' && items.value[index]) {
       items.value.splice(index, 1, item);
       save();

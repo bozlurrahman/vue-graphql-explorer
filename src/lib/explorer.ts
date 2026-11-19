@@ -58,6 +58,7 @@ import History from '../components/history/History.vue';
 import type { AddSuffix } from '../types/common';
 import { isAsyncIterable, makeAsyncIterableIteratorFromSink } from './iterator';
 import { defineComponent, markRaw } from 'vue-demi';
+import { stripCredentialHeaders } from './credentials';
 import { hWithProps } from './h';
 import type { Component, Ref } from 'vue-demi';
 import type { SimpleEditorInstance } from '../composables/useSimpleEditor';
@@ -1047,10 +1048,13 @@ export default function debounce<F extends (...args: any[]) => any>(duration: nu
   } as F;
 }
 
+// Responses are never stored; headers only when the user asks, and never credential headers (EXP-06).
 export function serializeTabState(tabState: TabsState, shouldPersistHeaders = false) {
-  return JSON.stringify(tabState, (key, value) =>
-    key === 'hash' || key === 'response' || (!shouldPersistHeaders && key === 'headers') ? null : value,
-  );
+  return JSON.stringify(tabState, (key, value) => {
+    if (key === 'hash' || key === 'response') return null;
+    if (key === 'headers') return shouldPersistHeaders ? stripCredentialHeaders(value) : null;
+    return value;
+  });
 }
 
 export type StorageValue = string | number | boolean | object | null;

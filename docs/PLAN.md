@@ -80,11 +80,23 @@ How one source serves Vue 2 and Vue 3:
     warnings. Not checked in the browser: prop changes after mount.
 - [ ] **EXP-05 Transport.** Keep both websocket protocols, because the intelli server runs both. When its UPG-02 drops
   `subscriptions-transport-ws`, remove the legacy client from the package in a major version.
-- [ ] **EXP-06 Auth and secrets.**
-  - The host passes the token through `headers`. The package never reads cookies on its own.
-  - Do not persist headers that look like credentials (`Authorization`, `Cookie`, `*token*`) to `localStorage`.
-    Persist the query, variables and other headers only.
-  - Never log headers or responses that hold tokens.
+- [x] **EXP-06 Auth and secrets.** Done 2026-11-19.
+  - The host passes the token through the `headers` prop (EXP-04), which is never stored. The package never reads
+    cookies (checked: no `cookie` access in `src/`).
+  - `src/lib/credentials.ts`: `isCredentialHeader` (Authorization, Proxy-Authorization, Cookie, Set-Cookie, and any
+    name containing token, secret, password, api-key, session, auth, jwt, bearer, credential) and
+    `stripCredentialHeaders` (header-editor JSON without them; text that is not a JSON object is dropped, because it
+    cannot be filtered).
+  - Saved tabs: headers only with "persist headers" on, and then without credentials; responses never. History:
+    credentials removed on add, push and edit; history saved by older versions is rewritten without them on load.
+    The settings dialog says credential headers are never saved.
+  - `storage.set` reports quota errors instead of throwing (history's retry-on-quota path now works).
+  - Logs: no `console` call prints headers or responses (checked).
+  - Tests: `test/credentials.test.ts` (24 tests). Headless Chrome, Vue 3 and Vue 2.7: a typed `Authorization` header
+    is sent but not in `localStorage` before or after reload; `x-keep` is persisted; old history with a token is
+    cleaned on load.
+  - Open: variables are stored as typed (tabs and history). A login mutation's `password` variable ends up in
+    `localStorage`. Decide whether to filter variable names too.
 - [ ] **EXP-07 SSR safety.** No `window`, `document` or `localStorage` access at import or setup time, so the package
   can be imported in Nuxt 2 and Nuxt 3/4 SSR. The host still renders it client-side only (`<ClientOnly>` / `<client-only>`).
 - [ ] **EXP-08 Tests and CI.**
@@ -141,7 +153,7 @@ Then update the status table below.
 | EXP-03 | Vue 2.7 + Vue 3 source | done 2026-11-19 (`92f7bdf`) |
 | EXP-04 | Props API, no Nuxt coupling, no console logs | done 2026-11-19 |
 | EXP-05 | Both websocket protocols | todo |
-| EXP-06 | Token through `headers`; credential headers never persisted or logged | todo |
+| EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
 | EXP-07 | SSR-safe import | todo |
 | EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | todo |
 | EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | todo (intelli-app-operations) |
