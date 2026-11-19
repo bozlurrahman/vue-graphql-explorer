@@ -189,7 +189,7 @@ Then update the status table below.
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
 | EXP-07 | SSR-safe import | done 2026-11-19 |
 | EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | done 2026-11-19 |
-| EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | todo (intelli-app-operations) |
+| EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | built 2026-11-19 (intelli-app-operations branch `exp-09-explorer-package`); merge waits for EXP-10 |
 | EXP-10 | Publish from CI with provenance | todo |
 | EXP-11 | Admin-only introspection in production | todo, decision needed (intelli-app-operations) |
 | EXP-12 | Docs | done 2026-11-19 |
