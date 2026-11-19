@@ -1,47 +1,44 @@
 # vue-graphql-explorer
 
-GraphiQL-style GraphQL explorer as a component library for Vue 2.7 and Vue 3.
+GraphiQL-style GraphQL explorer as a component library for Vue 2.7 and Vue 3: query editor with schema-aware
+completion and linting, variables and headers, response view, documentation explorer, history, and a
+point-and-click query builder.
 
-Status: being extracted from the Intelli Apps admin panel. The work plan lives in
-`intelli-app-operations/docs/MasterPlan.md`, section "GraphQL explorer package" (items EXP-01 to EXP-12).
-Builds and runs on Vue 2.7 and Vue 3 (EXP-03). The public props are temporary (`url`, `wsUrl`) until EXP-04.
+Status: pre-release (0.x). It builds and runs on Vue 2.7 and Vue 3; the public props are not final yet.
+Plan and status: [`docs/PLAN.md`](docs/PLAN.md).
 
-Published to npm as `vue-graphql-explorer`. License: MIT.
-
-## Development
+## Install
 
 ```bash
-npm run setup       # installs the root (Vue 3) and toolchain/vue2 (Vue 2.7 compiler)
-npm run lint
-npm run typecheck
-npm test
-npm run build       # dist/vue3, dist/vue2, dist/types, then points dist/index.js at vue3
+npm install vue-graphql-explorer graphql
 ```
 
-- One source in `src/`, two builds. `vite build --mode vue3` uses `@vitejs/plugin-vue`; `--mode vue2` uses
-  `@vitejs/plugin-vue2` and Vue 2.7 from `toolchain/vue2/node_modules`. They live in their own folder because
-  Vue 2 and Vue 3 cannot share one `node_modules` without peer conflicts.
-- Entry points: `vue-graphql-explorer` (picked by the `postinstall` script from the host's `vue` version),
-  `vue-graphql-explorer/vue3`, `vue-graphql-explorer/vue2`, and the matching `style.css`.
-  Hosts can switch by hand with `npx vue-graphql-explorer-switch 2|3`.
-- Playgrounds: `playground/vue3` and `playground/vue2` (`npm install && npm run dev` in each, after a root build).
-- `vitest` is pinned to `~4.0`: `vitest@4.1` makes npm 10.9 crash while building the tree
-  (`Cannot read properties of null (reading 'edgesOut')`).
+`vue` (`^2.7` or `^3.3`) and `graphql` (`^16`) are peer dependencies. On install, the package picks the build
+that matches your `vue`; to switch by hand run `npx vue-graphql-explorer-switch 2` or `3`.
 
-## Rules for the shared source (Vue 2.7 + Vue 3)
+## Usage
 
-ESLint enforces most of these (`eslint.config.mjs`); the Vue 2 build catches the rest.
+```vue
+<template>
+  <GraphqlExplorer url="/graphql" />
+</template>
 
-- Import Composition API functions from `vue-demi`, never from `vue`. No Pinia: stores use
-  `defineExplorerStore` (`src/stores/registry.ts`), one registry per `<GraphqlExplorer>`.
-- One root element per template (`<div class="graphiql-contents">` adds no box).
-- No `Teleport`, `Suspense`, `Fragment`, `defineModel`, `useTemplateRef`, `useId`, `capitalize`.
-  Template refs: `const fooRef = ref<HTMLElement | null>(null)` with `ref="fooRef"`. Portals: `v-portal`.
-- No TypeScript in templates (`as`, `!`): put casts in the script.
-- `defineProps<Props>()` with `Props` declared in the same file (the Vue 2.7 compiler cannot read imported types).
-- `<template v-for>`: put `:key` on the child elements.
-- Render functions: `hWithProps` / `hWithHtml` (`src/lib/h.ts`), not `h()` with a Vue 3 data object.
-- Large or class-based values (GraphQL schema and types, editor instances, Maps) go in `shallowRef` and are
-  replaced, not mutated. Vue 2 cannot observe Maps or `shallowReactive` arrays.
-- A store that returns an object holding refs it still uses itself wraps it in `markRaw()`: Vue 2's
-  `reactive()` converts nested objects in place.
+<script setup lang="ts">
+import { GraphqlExplorer } from 'vue-graphql-explorer';
+import 'vue-graphql-explorer/style.css';
+</script>
+```
+
+Explicit builds: `vue-graphql-explorer/vue3` and `vue-graphql-explorer/vue2` (with `vue3/style.css` and
+`vue2/style.css`). Render it client-side only (`<ClientOnly>` in Nuxt 3/4, `<client-only>` in Nuxt 2).
+
+Props (temporary until 1.0): `url` (required, HTTP endpoint) and `wsUrl` (subscriptions; derived from `url` when
+omitted).
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## License
+
+MIT
