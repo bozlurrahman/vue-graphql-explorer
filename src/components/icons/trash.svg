@@ -1,0 +1,6 @@
+<svg width="1em" height="5em" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" aria-hidden="true"
+  viewBox="0 0 23 23" style="height: 1.5em" clip-rule="evenodd">
+  <path
+    d="M19 24h-14c-1.1 0-2-.8-2-2v-17h-1v-2h6v-1.5c0-.8.6-1.5 1.5-1.5h5c.8 0 1.5.6 1.5 1.5v1.5h6v2h-1v17c0 1.1-.8 2-2 2zm0-19h-14v16.5c0 .2.2.5.5.5h13c.2 0 .5-.2.5-.5v-16.5zm-7 7.5l3.2-3.2 1.4 1.4-3.2 3.2 3.2 3.2-1.4 1.4-3.2-3.2-3.2 3.2-1.4-1.4 3.2-3.2-3.2-3.2 1.4-1.4 3.2 3.2zm2-10.5h-4v1h4v-1z"
+    fill="currentColor" stroke-width=".2" stroke="currentColor" />
+</svg>
