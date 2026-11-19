@@ -30,6 +30,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [plugin],
     build: {
+      // Vue 2.7 hosts often still build with webpack 4 (Nuxt 2, Vue CLI 4), whose parser rejects `?.`, `??`
+      // and `||=`. ES2019 output lowers them; the Vue 3 build keeps Vite's modern default.
+      ...(target === 'vue2' ? { target: 'es2019' } : {}),
       outDir: `dist/${target}`,
       emptyOutDir: true,
       sourcemap: false,

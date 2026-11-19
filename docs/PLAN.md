@@ -141,16 +141,37 @@ How one source serves Vue 2 and Vue 3:
 - [ ] **EXP-09 Nuxt admin integration** (work in intelli-app-operations).
   - Develop against this repo (`npm link`, or `"file:../../vue-graphql-explorer"` in `nuxt/package.json`). Never
     commit the `file:` path; switch to the npm version range before merging.
-  - New admin page `/admin/explorer` behind `AuthMiddleware` with a new permission `admin_explorer_list`. It passes
+  - New admin page `/admin/developer/explorer` behind `AuthMiddleware` with a new permission `admin_explorer_list`. It passes
     `graphqlHttpUrl()`, `graphqlWsUrl()` and the admin Bearer token.
   - Sidebar entry in `data/navigation-data.ts`.
-  - Delete `pages/explorer/` and the moved files from nuxt. Keep a redirect from `/explorer` to `/admin/explorer`.
-- [ ] **EXP-10 Publish.**
+  - Delete `pages/explorer/` and the moved files from nuxt. Keep a redirect from `/explorer` to `/admin/developer/explorer`.
+- [ ] **EXP-10 Publish.** Prepared 2026-11-19; the first publish waits for the npm token (one-time setup below).
   - npm user `bozlur` with 2FA. Publish from this repo's CI on a `v*` tag, with a granular publish-only `NPM_TOKEN`
     limited to `vue-graphql-explorer`, and `--provenance`. Nobody publishes from a laptop.
   - Semantic versioning, `CHANGELOG.md`, README usage for Vue 3, Vue 2.7, Nuxt 3/4 and Nuxt 2.
   - Before the first publish, check the tarball (`npm run pack:check`): no `.env`, no internal URLs, no source maps
     that expose local paths.
+  - Done:
+    - `.github/workflows/release.yml` on a `v*` tag. It runs the full CI (`ci.yml` is reusable), checks that the
+      tag matches `package.json` and that `CHANGELOG.md` has the section, then runs build and `pack:check`. It
+      publishes with `--provenance` (`latest`, or `next` for a version with a hyphen) and creates the GitHub
+      release from the changelog section. The npm token sits in the GitHub environment `npm`.
+    - `prepublishOnly` (`scripts/prepublish-guard.mjs`) refuses to publish outside that workflow.
+      `publishConfig`: public access, provenance.
+    - `npm run pack:check` (`scripts/pack-check.mjs`) checks the file allowlist and rejects source maps, env
+      files, internal hosts, local paths and a root entry not on vue3. Tarball for 0.1.0: 88 files, 123 kB.
+    - Version `0.1.0`, `CHANGELOG.md`, README sections for Vue 3, Vue 2.7, Nuxt 3/4 and Nuxt 2, and release steps
+      in `CONTRIBUTING.md`.
+    - Nuxt 2.18.1 + Vue 2.7 checked with a real build and headless Chrome. Fixed on the way: `dist/vue2` is now
+      ES2019, because webpack 4 cannot parse `?.`, `??` or `||=`. Host setup the README now documents:
+      transpile `graphql` and its helpers, the `.mjs` `javascript/auto` rule, and the `vue$` alias to avoid two
+      Vue instances.
+  - Left for the owner:
+    1. Create the npm token. The first one needs publish rights on all packages, because a granular token can
+       only be limited to packages that already exist. Store it as `NPM_TOKEN` in the GitHub environment `npm`.
+    2. Push `main`, then `git tag v0.1.0 && git push origin v0.1.0`.
+    3. After the first publish, replace the token with one limited to `vue-graphql-explorer`, or switch to npm
+       trusted publishing.
 - [ ] **EXP-11 Server introspection in production** (work in intelli-app-operations `server/`). Apollo turns
   introspection off when `NODE_ENV=production`, so the admin explorer has no schema there. Decide:
   - (a) the explorer stays dev and staging only, or
@@ -164,7 +185,7 @@ How one source serves Vue 2 and Vue 3:
 
 - `npm pack` gives a package that installs into a new Vite + Vue 3 app and a new Vite + Vue 2.7 app. In both, it runs
   a query and a subscription against the local intelli-app-operations server.
-- The nuxt admin panel uses the npm version at `/admin/explorer`; a staff user without `admin_explorer_list` gets the
+- The nuxt admin panel uses the npm version at `/admin/developer/explorer`; a staff user without `admin_explorer_list` gets the
   unauthorized page.
 - Credential headers are not in `localStorage` after a reload.
 - intelli-app-operations `nuxt/` has no `components/gql/` folder and no `pages/explorer/` page.
@@ -189,7 +210,7 @@ Then update the status table below.
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
 | EXP-07 | SSR-safe import | done 2026-11-19 |
 | EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | done 2026-11-19 |
-| EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | built 2026-11-19 (intelli-app-operations branch `exp-09-explorer-package`); merge waits for EXP-10 |
-| EXP-10 | Publish from CI with provenance | todo |
+| EXP-09 | Nuxt admin uses the npm package at `/admin/developer/explorer` | built 2026-11-19 (intelli-app-operations branch `exp-09-explorer-package`); merge waits for EXP-10 |
+| EXP-10 | Publish from CI with provenance | prepared 2026-11-19; first publish waits for the npm token |
 | EXP-11 | Admin-only introspection in production | todo, decision needed (intelli-app-operations) |
 | EXP-12 | Docs | done 2026-11-19 |

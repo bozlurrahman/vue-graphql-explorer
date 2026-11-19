@@ -58,5 +58,28 @@ ESLint enforces most of these (`eslint.config.mjs`); the Vue 2 build and the pla
 
 ## Releases
 
-Semantic versioning. Releases are published from CI on a `v*` tag with npm provenance (EXP-10 in `docs/PLAN.md`);
-nobody publishes from a laptop.
+Semantic versioning; while the version is 0.x, a minor version may break the API (list it under **Breaking** in
+`CHANGELOG.md`). Releases are published by `.github/workflows/release.yml` on a `v*` tag, with npm provenance.
+Nobody publishes from a laptop: `prepublishOnly` (`scripts/prepublish-guard.mjs`) refuses outside that workflow.
+
+1. Move the `[Unreleased]` entries in `CHANGELOG.md` to a new `## [x.y.z] - YYYY-MM-DD` section and update the
+   compare links at the bottom.
+2. `npm version x.y.z --no-git-tag-version` (updates `package.json` and `package-lock.json`).
+3. `npm run build && npm run pack:check`: the tarball allowlist, no source maps or env files, no internal hosts
+   or local paths.
+4. Commit, then `git tag vx.y.z && git push origin main vx.y.z`.
+
+The workflow runs the full CI, checks that the tag matches `package.json` and that `CHANGELOG.md` has the
+section, publishes (`latest`, or `next` for a version with a hyphen) and creates the GitHub release from the
+changelog section.
+
+One-time setup: a granular npm access token for the account `bozlur` (2FA on), publish rights on
+`vue-graphql-explorer` only, stored as the `NPM_TOKEN` secret of the GitHub environment `npm`. Add required
+reviewers to that environment to approve each release by hand.
+
+- First publish: npm only lets a granular token be limited to packages that already exist. For `0.1.0` use a
+  short-lived token with publish rights on all packages, then replace it with one limited to
+  `vue-graphql-explorer`.
+- Alternative without a stored token: npm trusted publishing (OIDC) for this repository and `release.yml`.
+  Configure it on the package's npm settings page after the first publish, then drop `NODE_AUTH_TOKEN` from the
+  workflow.

@@ -1,6 +1,6 @@
 {
   "name": "vue-graphql-explorer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "GraphiQL-style GraphQL explorer component for Vue 2.7 and Vue 3",
   "license": "MIT",
   "author": "Bozlur Rahman",
@@ -28,6 +28,7 @@
   ],
   "files": [
     "dist",
+    "CHANGELOG.md",
     "scripts/switch.mjs",
     "scripts/postinstall.mjs"
   ],
@@ -66,10 +67,11 @@
     "lint": "eslint .",
     "format": "prettier --write --ignore-path .gitignore .",
     "test": "vitest run",
-    "pack:check": "npm pack --dry-run",
+    "pack:check": "node ./scripts/pack-check.mjs",
     "test:ssr:vue2": "node ./scripts/ssr-check-vue2.mjs",
     "test:vue2": "vitest run --config toolchain/vue2/vitest.config.mjs",
-    "size": "node ./scripts/size-report.mjs"
+    "size": "node ./scripts/size-report.mjs",
+    "prepublishOnly": "node ./scripts/prepublish-guard.mjs"
   },
   "peerDependencies": {
     "graphql": "^16.0.0",
@@ -101,5 +103,9 @@
     "vue": "^3.5.34",
     "vue-tsc": "^3.3.14",
     "ws": "^8.23.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
