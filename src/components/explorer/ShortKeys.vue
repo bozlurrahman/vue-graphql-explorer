@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { SHORT_KEYS } from '~/lib/explorer';
+import { SHORT_KEYS } from '../../lib/explorer';
 defineProps<{
   keyMap: { type: string; required: true };
 }>();

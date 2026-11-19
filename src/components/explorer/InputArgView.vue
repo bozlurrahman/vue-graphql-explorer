@@ -31,8 +31,8 @@ import {
   type VariableDefinitionNode,
 } from 'graphql';
 import { computed } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import { coerceArgValue, defaultInputObjectFields, unwrapInputType, type Field, type Selections } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import { coerceArgValue, defaultInputObjectFields, unwrapInputType, type Field, type Selections } from '../../lib/explorer';
 import AbstractArgView from './AbstractArgView.vue';
 
 export type InputArgViewProps = {

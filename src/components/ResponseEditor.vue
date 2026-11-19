@@ -1,8 +1,8 @@
 <!-- src/components/gql/ResponseEditor.vue -->
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue';
-import { useSimpleEditor } from '~/composables/useSimpleEditor';
-import { formatError } from '~/lib/explorer';
+import { useSimpleEditor } from '../composables/useSimpleEditor';
+import { formatError } from '../lib/explorer';
 
 // ── Stores ───────────────────────────────────────────────────────────────────
 const { fetchError, validationErrors } = useSchemaStore();

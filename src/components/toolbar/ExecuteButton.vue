@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import PlayIcon from '../../../components/gql/icons/play.svg?raw';
-import StopIcon from '../../../components/gql/icons/stop.svg?raw';
+import PlayIcon from '../icons/play.svg?raw';
+import StopIcon from '../icons/stop.svg?raw';
 
 const execution = useExecutionStore();
 const editorStore = useEditorStore();

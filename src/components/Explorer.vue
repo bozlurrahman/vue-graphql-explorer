@@ -15,7 +15,7 @@ import {
   type ValueNode,
 } from 'graphql';
 import { capitalize, computed, onMounted, provide, ref, toRef, type CSSProperties } from 'vue';
-import { ExplorerContextKey } from '~/composables/useExplorerContext';
+import { ExplorerContextKey } from '../composables/useExplorerContext';
 import {
   DEFAULT_DOCUMENT,
   defaultArrowClosed,
@@ -30,7 +30,7 @@ import {
   type GraphiQLExplorerProps,
   type NewOperationType,
   type StyleConfig,
-} from '~/lib/explorer';
+} from '../lib/explorer';
 import Operation from './explorer/Operation.vue';
 
 const props = defineProps<GraphiQLExplorerProps>();

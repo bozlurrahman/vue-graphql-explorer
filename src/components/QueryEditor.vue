@@ -14,8 +14,8 @@ import {
   type ClickInfo,
   type CompletionItem,
   type LintDiagnostic,
-} from '~/composables/useSimpleEditor';
-import { getSelectedOperationName, type SimpleEditorInstanceWithOperationFacts } from '~/lib/explorer';
+} from '../composables/useSimpleEditor';
+import { getSelectedOperationName, type SimpleEditorInstanceWithOperationFacts } from '../lib/explorer';
 
 // ── Stores ───────────────────────────────────────────────────────────────────
 const executionCtx = useExecutionStore();

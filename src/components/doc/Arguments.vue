@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import type { GraphQLArgument } from 'graphql';
 import { computed, ref } from 'vue';
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 import Argument from './Argument.vue';
 import ExplorerSection from './ExplorerSection.vue';
 

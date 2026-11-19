@@ -25,8 +25,8 @@ import {
   type VariableDefinitionNode,
 } from 'graphql';
 import { computed, ref } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import { coerceArgValue, DEFAULT_QUERY, unwrapInputType, type Field, type Selections } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import { coerceArgValue, DEFAULT_QUERY, unwrapInputType, type Field, type Selections } from '../../lib/explorer';
 import Checkbox from './Checkbox.vue';
 import InputArgView from './InputArgView.vue';
 import ScalarInput from './ScalarInput.vue';

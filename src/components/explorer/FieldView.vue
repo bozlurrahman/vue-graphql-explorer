@@ -96,8 +96,8 @@ import {
   type SelectionSetNode,
 } from 'graphql';
 import { computed, Fragment, ref } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import { defaultArgs, unwrapOutputType, type AvailableFragments, type Field, type Selections } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import { defaultArgs, unwrapOutputType, type AvailableFragments, type Field, type Selections } from '../../lib/explorer';
 import AbstractView from './AbstractView.vue';
 import ArgView from './ArgView.vue';
 import Checkbox from './Checkbox.vue';

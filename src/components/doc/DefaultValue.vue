@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { astFromValue, print } from 'graphql';
 import { computed } from 'vue';
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 
 const props = defineProps<{
   field: ExplorerFieldDef;

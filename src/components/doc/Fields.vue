@@ -17,7 +17,7 @@
 import type { GraphQLNamedType } from 'graphql';
 import { isInputObjectType, isInterfaceType, isObjectType } from 'graphql';
 import { computed, ref } from 'vue';
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 import ExplorerSection from './ExplorerSection.vue';
 import Field from './Field.vue';
 

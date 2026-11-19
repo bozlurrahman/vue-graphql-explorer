@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 
 const props = defineProps<{
   field: ExplorerFieldDef;

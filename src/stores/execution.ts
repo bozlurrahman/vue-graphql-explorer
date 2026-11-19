@@ -12,8 +12,8 @@ import {
   tryParseJsonObject,
   type Fetcher,
   type UnSubscribable,
-} from '~/lib/explorer';
-import { isAsyncIterable } from '~/lib/iterator';
+} from '../lib/explorer';
+import { isAsyncIterable } from '../lib/iterator';
 import { useEditorStore } from './editor';
 import { useHistoryStore } from './history';
 

@@ -1,7 +1,7 @@
 <!-- src/components/gql/Tabs.vue -->
 <script setup lang="ts">
 import { computed } from 'vue';
-import ToolTip from '../ToolTip.vue';
+import ToolTip from './ToolTip.vue';
 import { CloseIcon, PlusIcon } from './icons';
 import UnStyledButton from './UnStyledButton.vue';
 

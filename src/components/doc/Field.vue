@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import type { GraphQLArgument } from 'graphql';
 import { computed } from 'vue';
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 import Argument from './Argument.vue';
 import DefaultValue from './DefaultValue.vue';
 import DeprecationReason from './DeprecationReason.vue';

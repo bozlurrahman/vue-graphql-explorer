@@ -1,5 +1,5 @@
 import { print } from 'graphql';
-import { mergeAst } from '~/lib/explorer';
+import { mergeAst } from '../lib/explorer';
 
 export function useMergeQuery() {
   const { queryEditor } = useEditorStore();

@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { clsx } from '@/lib/common';
+import { clsx } from '../../lib/clsx';
 import { computed } from 'vue';
 
 const props = defineProps<{

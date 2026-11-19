@@ -55,10 +55,10 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import ToolTip from '~/components/ToolTip.vue';
-import { clsx } from '~/lib/common';
-import { formatQuery } from '~/lib/explorer';
-import type { QueryStoreItem } from '~/stores/history';
+import ToolTip from '../ToolTip.vue';
+import { clsx } from '../../lib/clsx';
+import { formatQuery } from '../../lib/explorer';
+import type { QueryStoreItem } from '../../stores/history';
 import { CloseIcon, PenIcon, StarFilledIcon, StarIcon, TrashIcon } from '../icons';
 import UnStyledButton from '../UnStyledButton.vue';
 

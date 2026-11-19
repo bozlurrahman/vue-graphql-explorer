@@ -23,8 +23,8 @@
 <script setup lang="ts">
 import { Kind, type DefinitionNode, type GraphQLObjectType, type InlineFragmentNode } from 'graphql';
 import { computed } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import type { AvailableFragments, Selections } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import type { AvailableFragments, Selections } from '../../lib/explorer';
 import Checkbox from './Checkbox.vue';
 import FieldView from './FieldView.vue';
 

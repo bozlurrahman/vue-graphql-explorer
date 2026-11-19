@@ -17,8 +17,8 @@
 <script setup lang="ts">
 import { Kind, type GraphQLArgument, type ValueNode } from 'graphql';
 import { computed, onMounted } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import { unwrapInputType } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import { unwrapInputType } from '../../lib/explorer';
 
 type ScalarInputProps = {
   arg: GraphQLArgument;

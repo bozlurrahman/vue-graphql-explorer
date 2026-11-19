@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { StorageValue } from '~/lib/explorer';
+import type { StorageValue } from '../lib/explorer';
 
 const STORAGE_NAMESPACE = 'graphiql';
 

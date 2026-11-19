@@ -3,9 +3,9 @@
 import type { GraphQLSchema } from 'graphql';
 import { isType } from 'graphql';
 import { computed } from 'vue';
-import type { ExplorerFieldDef } from '~/lib/explorer';
-import { useDocumentationStore } from '../../stores/documentation';
-import { useSchemaStore } from '../../stores/schema';
+import type { ExplorerFieldDef } from '../lib/explorer';
+import { useDocumentationStore } from '../stores/documentation';
+import { useSchemaStore } from '../stores/schema';
 import FieldDocumentation from './doc/FieldDocumentation.vue';
 import SchemaDocumentation from './doc/SchemaDocumentation.vue';
 import TypeDocumentation from './doc/TypeDocumentation.vue';

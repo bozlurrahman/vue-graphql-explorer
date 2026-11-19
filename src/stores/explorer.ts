@@ -11,7 +11,7 @@ import {
 } from 'graphql';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
-import type { ExplorerNavStack, ExplorerNavStackItem } from '~/lib/explorer';
+import type { ExplorerNavStack, ExplorerNavStackItem } from '../lib/explorer';
 import { useSchemaStore } from './schema';
 
 const initialNavStackItem: ExplorerNavStackItem = { name: 'Explorer' };

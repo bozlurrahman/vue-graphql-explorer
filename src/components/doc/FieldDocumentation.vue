@@ -1,6 +1,6 @@
 <!-- components/gql/doc/FieldDocumentation.vue -->
 <script setup lang="ts">
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 import Arguments from './Arguments.vue';
 import DeprecationReason from './DeprecationReason.vue';
 import Directives from './Directives.vue';

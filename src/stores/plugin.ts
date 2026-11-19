@@ -1,7 +1,7 @@
 // src/stores/plugin.ts
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { DOC_EXPLORER_PLUGIN, HISTORY_PLUGIN, type GraphiQLPlugin } from '~/lib/explorer';
+import { DOC_EXPLORER_PLUGIN, HISTORY_PLUGIN, type GraphiQLPlugin } from '../lib/explorer';
 // import { useStorageStore } from './storage';
 
 // const STORAGE_KEY_PLUGIN = 'visiblePlugin';

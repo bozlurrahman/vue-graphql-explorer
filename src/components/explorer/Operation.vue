@@ -9,8 +9,8 @@ import {
   type OperationDefinitionNode,
 } from 'graphql';
 import { computed, ref } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import { DEFAULT_DOCUMENT, type AvailableFragments, type OperationType } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import { DEFAULT_DOCUMENT, type AvailableFragments, type OperationType } from '../../lib/explorer';
 import RootView from './RootView.vue';
 
 export type OperationProps = {

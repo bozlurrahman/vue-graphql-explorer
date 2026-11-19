@@ -52,10 +52,10 @@ import type { Client } from 'graphql-ws';
 import { meros } from 'meros';
 import type { ClientOptions } from 'subscriptions-transport-ws';
 import type { CSSProperties } from 'vue';
-import Documentation from '~/components/gql/Documentation.vue';
-import Explorer from '~/components/gql/Explorer.vue';
-import History from '~/components/gql/history/History.vue';
-import type { AddSuffix } from '~/type/common';
+import Documentation from '../components/Documentation.vue';
+import Explorer from '../components/Explorer.vue';
+import History from '../components/history/History.vue';
+import type { AddSuffix } from '../types/common';
 import { isAsyncIterable, makeAsyncIterableIteratorFromSink } from './iterator';
 
 export const isMacOs = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
@@ -761,7 +761,7 @@ export type PluginContextType = {
   visiblePlugin: GraphiQLPlugin | null;
 };
 
-// import  DocsFilledIcon from '~/components/gql/icons';
+// import  DocsFilledIcon from '../components/icons';
 // Mark them as raw (this is the fix)
 export const DOC_EXPLORER_PLUGIN = markRaw({
   title: 'Documentation',

@@ -1,20 +1,20 @@
 <!-- src/components/gql/GraphiQLInterface.vue -->
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
-import '~/assets/css/explorer.css';
-import '~/assets/css/simple-editor.css';
+import '../styles/explorer.css';
+import '../styles/simple-editor.css';
 import {
   createGraphiQLFetcher,
   DOC_EXPLORER_PLUGIN,
   ExplorerPlugin,
   HISTORY_PLUGIN,
   TAB_CLASS_PREFIX,
-} from '~/lib/explorer';
-import { useDragResize } from '../../composables/useDragResize';
+} from '../lib/explorer';
+import { useDragResize } from '../composables/useDragResize';
 
 import { SubscriptionClient } from 'subscriptions-transport-ws';
-import ToolTip from '../ToolTip.vue';
-import Spinner from '../widgets/Spinner.vue';
+import ToolTip from './ToolTip.vue';
+import Spinner from './Spinner.vue';
 import HeaderEditor from './HeaderEditor.vue';
 import { ReloadIcon } from './icons';
 import QueryEditor from './QueryEditor.vue';

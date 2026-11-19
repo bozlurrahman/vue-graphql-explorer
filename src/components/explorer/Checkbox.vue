@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import type { StyleConfig } from '~/lib/explorer';
+import type { StyleConfig } from '../../lib/explorer';
 
 defineProps<{ checked: boolean; styleConfig: StyleConfig }>();
 </script>

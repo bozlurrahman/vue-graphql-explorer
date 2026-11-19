@@ -1,7 +1,7 @@
 <!-- src/components/gql/HeaderEditor.vue -->
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
-import { useSimpleEditor } from '~/composables/useSimpleEditor';
+import { useSimpleEditor } from '../composables/useSimpleEditor';
 
 // ── Props ────────────────────────────────────────────────────────────────────
 const props = defineProps<{ isHidden?: boolean }>();

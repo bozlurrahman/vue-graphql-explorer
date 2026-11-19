@@ -54,14 +54,14 @@ import {
   type OperationDefinitionNode,
 } from 'graphql';
 import { capitalize, computed, onMounted, ref } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
+import { useExplorerContext } from '../../composables/useExplorerContext';
 import {
   DEFAULT_DOCUMENT,
   parseQuery,
   type AvailableFragments,
   type OperationType,
   type Selections,
-} from '~/lib/explorer';
+} from '../../lib/explorer';
 import FieldView from './FieldView.vue';
 
 export type RootViewProps = {

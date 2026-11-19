@@ -12,16 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import ArgumentIcon from '../../../components/gql/icons/argument.svg?raw';
-import DeprecatedArgumentIcon from '../../../components/gql/icons/deprecated-argument.svg?raw';
-import DeprecatedEnumValueIcon from '../../../components/gql/icons/deprecated-enum-value.svg?raw';
-import DeprecatedFieldIcon from '../../../components/gql/icons/deprecated-field.svg?raw';
-import DirectiveIcon from '../../../components/gql/icons/directive.svg?raw';
-import EnumValueIcon from '../../../components/gql/icons/enum-value.svg?raw';
-import FieldIcon from '../../../components/gql/icons/field.svg?raw';
-import ImplementsIcon from '../../../components/gql/icons/implements.svg?raw';
-import RootTypeIcon from '../../../components/gql/icons/root-type.svg?raw';
-import TypeIcon from '../../../components/gql/icons/type.svg?raw';
+import ArgumentIcon from '../icons/argument.svg?raw';
+import DeprecatedArgumentIcon from '../icons/deprecated-argument.svg?raw';
+import DeprecatedEnumValueIcon from '../icons/deprecated-enum-value.svg?raw';
+import DeprecatedFieldIcon from '../icons/deprecated-field.svg?raw';
+import DirectiveIcon from '../icons/directive.svg?raw';
+import EnumValueIcon from '../icons/enum-value.svg?raw';
+import FieldIcon from '../icons/field.svg?raw';
+import ImplementsIcon from '../icons/implements.svg?raw';
+import RootTypeIcon from '../icons/root-type.svg?raw';
+import TypeIcon from '../icons/type.svg?raw';
 
 const props = defineProps<{
   title:

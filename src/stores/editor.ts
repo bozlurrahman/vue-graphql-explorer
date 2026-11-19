@@ -15,7 +15,7 @@ import {
   type TabDefinition,
   type TabState,
   type TabsState,
-} from '~/lib/explorer';
+} from '../lib/explorer';
 import { useStorageStore } from './storage';
 
 export const useEditorStore = defineStore('editor', () => {

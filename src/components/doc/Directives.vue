@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { DirectiveNode } from 'graphql';
-import type { ExplorerFieldDef } from '~/lib/explorer';
+import type { ExplorerFieldDef } from '../../lib/explorer';
 import Directive from './Directive.vue';
 import ExplorerSection from './ExplorerSection.vue';
 

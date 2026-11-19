@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import { Kind, type FragmentDefinitionNode, type FragmentSpreadNode } from 'graphql';
 import { computed } from 'vue';
-import { useExplorerContext } from '~/composables/useExplorerContext';
-import type { Selections } from '~/lib/explorer';
+import { useExplorerContext } from '../../composables/useExplorerContext';
+import type { Selections } from '../../lib/explorer';
 import Checkbox from './Checkbox.vue';
 
 export type FragmentViewProps = {
