@@ -1,0 +1,10 @@
+{
+  "name": "vue-graphql-explorer-toolchain-vue2",
+  "private": true,
+  "description": "Vue 2.7 compiler for the dist/vue2 build. Kept apart from the root so the root can install Vue 3 without peer conflicts. Install with `npm run setup` in the root.",
+  "devDependencies": {
+    "@vitejs/plugin-vue2": "^2.3.4",
+    "vite": "^7.3.8",
+    "vue": "2.7.16"
+  }
+}
