@@ -13,16 +13,15 @@ export const makeAsyncIterableIteratorFromSink = (make: any) => {
   const { pushValue, asyncIterableIterator } = makePushPullAsyncIterableIterator();
   const dispose = make({
     next: (value: any) => {
-      // console.log('[sink.next] received value:', value);
       pushValue(value);
     },
     complete: () => {
-      // console.log('[sink.complete] called');
       asyncIterableIterator.return();
     },
     error: (err: any) => {
-      // console.log('[sink.error] called:', err);
-      asyncIterableIterator.throw(err);
+      // The consumer gets the error from its pending or next `next()` call. The promise `throw()` returns
+      // rejects with the same error; catch it so it is not reported again as an unhandled rejection.
+      asyncIterableIterator.throw(err).catch(() => {});
     },
   });
   const originalReturn = asyncIterableIterator.return;

@@ -178,7 +178,6 @@ function executionStoreSetup() {
 
         subscription.value = {
           unsubscribe: () => {
-            // console.log('[stop] closing iterator');
             iterator.return?.();
           },
         };
@@ -193,7 +192,8 @@ function executionStoreSetup() {
             step = await iterator.next();
           }
         } catch (err) {
-          console.error('[AsyncIterable] closed or errored:', err);
+          // Socket closed, connection rejected or resolver error: show it, unless the user stopped this run.
+          if (runId === queryIdCounter.value) setResponse(formatError(err));
         } finally {
           isFetching.value = false;
           subscription.value = null;

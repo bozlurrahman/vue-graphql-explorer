@@ -88,6 +88,23 @@ describe(`<GraphqlExplorer> on Vue ${vueMajor}`, () => {
     expect(stored).not.toContain('Bearer secret');
   });
 
+  it('shows a subscription error in the response pane', async () => {
+    const fetcher = vi.fn(async (params: FetcherParams) => {
+      if (params.operationName === 'IntrospectionQuery') return { data: introspectionFromSchema(schema) };
+      return (async function* () {
+        yield { data: { tags: [] } };
+        throw new Error('Socket closed with event 4403 Forbidden');
+      })();
+    });
+    const wrapper = await mountWith({ url: '/graphql', fetcher, defaultQuery: 'query Tags { tags { label } }' });
+
+    await wrapper.find('.execute-btn').trigger('click');
+    await settle();
+
+    const response = wrapper.find('.graphiql-response textarea').element as unknown as HTMLTextAreaElement;
+    expect(response.value).toContain('4403 Forbidden');
+  });
+
   it('toggles the doc explorer', async () => {
     const wrapper = await mountWith({ url: '/graphql', fetcher: mockFetcher(), defaultQuery: '{ tags { label } }' });
     const button = wrapper.find('button[aria-label="Documentation"]');

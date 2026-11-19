@@ -78,8 +78,23 @@ How one source serves Vue 2 and Vue 3:
     introspection, queries and `connection_init`; `playground:` storage keys; `defaultQuery` on a fresh tab;
     subscription reaches the server (auth error, as expected without a token); no websocket at load; no console
     warnings. Not checked in the browser: prop changes after mount.
-- [ ] **EXP-05 Transport.** Keep both websocket protocols, because the intelli server runs both. When its UPG-02 drops
+- [x] **EXP-05 Transport.** Keep both websocket protocols, because the intelli server runs both. When its UPG-02 drops
   `subscriptions-transport-ws`, remove the legacy client from the package in a major version.
+  - `test/websocket.test.ts`: one local server speaks both protocols; the real `useExplorerFetcher` streams values,
+    sends `headers` as connection params, receives resolver errors, and stops the server-side subscription when
+    the iterator closes. Checked live against the intelli server on 30011: both protocols reach it, and the guard
+    rejects an anonymous `application_deleted` subscription with `UNAUTHENTICATED`.
+  - Fixed:
+    - Subscription errors (socket closed, connection rejected) went to `console.error`; the response pane now
+      shows them.
+    - Each subscription error also caused an unhandled promise rejection (`src/lib/iterator.ts`).
+    - `err instanceof CloseEvent` threw a `ReferenceError` where `CloseEvent` is not a global (Node 22), hiding
+      the real close reason. Now duck-typed.
+    - The built-in fetcher used only `window.fetch`; it now uses `globalThis.fetch`.
+  - Known limits:
+    - `graphql-ws` opens one socket per subscription (lazy, closed when the subscription ends).
+    - `subscriptions-transport-ws` keeps one socket per URL, with connection params from the host `headers`
+      when it opens. Headers typed in the header editor do not reach it.
 - [x] **EXP-06 Auth and secrets.** Done 2026-11-19.
   - The host passes the token through the `headers` prop (EXP-04), which is never stored. The package never reads
     cookies (checked: no `cookie` access in `src/`).
@@ -170,7 +185,7 @@ Then update the status table below.
 | EXP-02 | Move the explorer source out of nuxt | done 2026-11-19 (`7a10dd8`, `99b44a1`); nuxt copies removed in EXP-09 |
 | EXP-03 | Vue 2.7 + Vue 3 source | done 2026-11-19 (`92f7bdf`) |
 | EXP-04 | Props API, no Nuxt coupling, no console logs | done 2026-11-19 |
-| EXP-05 | Both websocket protocols | todo |
+| EXP-05 | Both websocket protocols | done 2026-11-19 |
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
 | EXP-07 | SSR-safe import | done 2026-11-19 |
 | EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | done 2026-11-19 |

@@ -1533,6 +1533,14 @@ export function mergeIncrementalResult(executionResult: IncrementalResult, incre
   }
 }
 
+// Duck-typed: `CloseEvent` is not a global everywhere (Node 22, some test runners), and `instanceof` on a missing
+// global throws a ReferenceError that hides the real close reason.
+function isCloseEvent(err: unknown): err is { code: number; reason?: string } {
+  return (
+    typeof err === 'object' && err !== null && !(err instanceof Error) && 'code' in err && typeof err.code === 'number'
+  );
+}
+
 const errorHasCode = (err: unknown): err is { code: string } => {
   return typeof err === 'object' && err !== null && 'code' in err;
 };
@@ -1612,7 +1620,7 @@ export const createWebsocketsFetcherFromClient =
       wsClient.subscribe(graphQLParams, {
         ...sink,
         error(err) {
-          if (err instanceof CloseEvent) {
+          if (isCloseEvent(err)) {
             sink.error(new Error(`Socket closed with event ${err.code} ${err.reason || ''}`.trim()));
           } else {
             sink.error(err);
@@ -1694,7 +1702,8 @@ export async function getWsFetcher(
 }
 
 export function createGraphiQLFetcher(options: CreateFetcherOptions): Fetcher {
-  const httpFetch = options.fetch || (typeof window !== 'undefined' && window.fetch);
+  const httpFetch =
+    options.fetch || (typeof globalThis.fetch === 'function' ? globalThis.fetch.bind(globalThis) : null);
   if (!httpFetch) throw new Error('No valid fetcher implementation available');
 
   options.enableIncrementalDelivery = options.enableIncrementalDelivery !== false;
