@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { vPortal } from '../directives/portal';
+import { onMounted, onUnmounted, ref } from 'vue-demi';
 
 interface Props {
   label: string | number | null;
@@ -15,8 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isVisible = ref(false);
-const triggerRef = useTemplateRef<HTMLElement>('triggerRef');
-const tooltipRef = useTemplateRef<HTMLElement>('tooltipRef');
+const triggerRef = ref<HTMLElement | null>(null);
+const tooltipRef = ref<HTMLElement | null>(null);
 
 function show() {
   isVisible.value = true;
@@ -104,12 +105,11 @@ onUnmounted(() => {
 
 <template>
   <span ref="triggerRef" @mouseenter="show" @mouseleave="hide" @focus="show" @blur="hide">
+    <!-- Portal to body (was <Teleport>): first child, so slot updates never use it as an anchor. -->
+    <div v-show="isVisible" ref="tooltipRef" v-portal class="graphiql-tooltip" role="tooltip">
+      {{ label }}
+    </div>
     <slot />
-    <Teleport to="body">
-      <div v-show="isVisible" ref="tooltipRef" class="graphiql-tooltip" role="tooltip">
-        {{ label }}
-      </div>
-    </Teleport>
   </span>
 </template>
 

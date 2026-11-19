@@ -8,10 +8,12 @@ import {
   type ExecutableDefinitionNode,
   type OperationDefinitionNode,
 } from 'graphql';
-import { computed, ref } from 'vue';
+import { computed, ref } from 'vue-demi';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import { DEFAULT_DOCUMENT, type AvailableFragments, type OperationType } from '../../lib/explorer';
 import RootView from './RootView.vue';
+import { useEditorStore } from '../../stores/editor';
+import { useSchemaStore } from '../../stores/schema';
 
 export type OperationProps = {
   operation: ExecutableDefinitionNode;

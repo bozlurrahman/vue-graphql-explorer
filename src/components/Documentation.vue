@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { GraphQLSchema } from 'graphql';
 import { isType } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import type { ExplorerFieldDef } from '../lib/explorer';
 import { useDocumentationStore } from '../stores/documentation';
 import { useSchemaStore } from '../stores/schema';
@@ -16,6 +16,10 @@ const schemaStore = useSchemaStore();
 const current = computed(() => docStore.navStack.at(-1));
 
 const goBack = () => docStore.pop();
+
+// Vue 2.7 templates cannot hold TypeScript casts; casts live here.
+const asSchema = (value: unknown) => value as GraphQLSchema;
+const asField = (value: unknown) => value as ExplorerFieldDef;
 </script>
 
 <template>
@@ -30,13 +34,13 @@ const goBack = () => docStore.pop();
       <div v-else-if="schemaStore.fetchError">{{ schemaStore.fetchError }}</div>
       <div v-else-if="!schemaStore.schema">No schema</div>
       <div v-else-if="docStore.navStack.length == 1">
-        <SchemaDocumentation :schema="schemaStore.schema as GraphQLSchema"></SchemaDocumentation>
+        <SchemaDocumentation :schema="asSchema(schemaStore.schema)"></SchemaDocumentation>
       </div>
       <div v-else-if="isType(current?.def)">
         <TypeDocumentation :type="current?.def"></TypeDocumentation>
       </div>
       <div v-else-if="current?.def">
-        <FieldDocumentation :field="current.def as ExplorerFieldDef"></FieldDocumentation>
+        <FieldDocumentation :field="asField(current.def)"></FieldDocumentation>
       </div>
     </div>
   </div>

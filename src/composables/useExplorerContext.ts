@@ -1,7 +1,8 @@
 // composables/useExplorerContext.ts
 import type { GraphQLObjectType } from 'graphql';
-import type { ComputedRef, InjectionKey, Ref } from 'vue';
+import type { ComputedRef, InjectionKey, Ref } from 'vue-demi';
 import type { AvailableFragments, GetDefaultScalarArgValue, MakeDefaultArg, StyleConfig } from '../lib/explorer';
+import { inject } from 'vue-demi';
 
 export interface ExplorerContext {
   /** Reactive computed — consumers access `.value` */

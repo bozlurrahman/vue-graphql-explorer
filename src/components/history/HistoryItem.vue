@@ -54,13 +54,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue-demi';
 import ToolTip from '../ToolTip.vue';
 import { clsx } from '../../lib/clsx';
 import { formatQuery } from '../../lib/explorer';
 import type { QueryStoreItem } from '../../stores/history';
 import { CloseIcon, PenIcon, StarFilledIcon, StarIcon, TrashIcon } from '../icons';
 import UnStyledButton from '../UnStyledButton.vue';
+import { useEditorStore } from '../../stores/editor';
+import { useHistoryStore } from '../../stores/history';
 
 const props = defineProps<{
   item: QueryStoreItem & { index?: number };
@@ -69,7 +71,7 @@ const props = defineProps<{
 const { editLabel, toggleFavorite, deleteFromHistory, setActive } = useHistoryStore();
 const { headerEditor, queryEditor, variableEditor } = useEditorStore();
 
-const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
+const inputRef = ref<HTMLInputElement | null>(null);
 const isEditable = ref(false);
 
 onMounted(() => {

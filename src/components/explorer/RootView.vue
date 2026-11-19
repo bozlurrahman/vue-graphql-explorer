@@ -34,7 +34,7 @@
     <FieldView
       v-for="(fieldName, index) in sortedFields"
       :key="index + '_' + fieldName"
-      :field="fields[fieldName]!"
+      :field="fields[fieldName]"
       :selections="selections"
       :definition="props.definition"
       :available-fragments="props.availableFragments"
@@ -53,7 +53,8 @@ import {
   type NameNode,
   type OperationDefinitionNode,
 } from 'graphql';
-import { capitalize, computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue-demi';
+import { capitalize } from '../../lib/strings';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import {
   DEFAULT_DOCUMENT,
@@ -63,6 +64,7 @@ import {
   type Selections,
 } from '../../lib/explorer';
 import FieldView from './FieldView.vue';
+import { useEditorStore } from '../../stores/editor';
 
 export type RootViewProps = {
   isLast: boolean;

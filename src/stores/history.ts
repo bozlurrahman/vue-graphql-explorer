@@ -1,7 +1,8 @@
 // nuxt/lib/history.ts
 import { parse } from 'graphql';
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { defineExplorerStore, type ExplorerStore } from './registry';
+import { computed, markRaw, ref } from 'vue-demi';
+import { useStorageStore } from './storage';
 
 export type QueryStoreItem = {
   query?: string;
@@ -12,7 +13,7 @@ export type QueryStoreItem = {
   favorite?: boolean;
 };
 
-export const useHistoryStore = defineStore('history', () => {
+function historyStoreSetup() {
   const MAX_HISTORY_LENGTH = 20;
 
   // Two separate storage instances
@@ -83,7 +84,7 @@ export const useHistoryStore = defineStore('history', () => {
     }
   };
 
-  const setActive = (item: QueryStoreItem) => {
+  const setActive = (_item: QueryStoreItem) => {
     // You can extend this later to load into editors
   };
 
@@ -94,11 +95,17 @@ export const useHistoryStore = defineStore('history', () => {
     editLabel,
     deleteFromHistory,
     setActive,
-    // Optional: expose raw storages if needed
-    historyStorage,
-    favoritesStorage,
+    // Optional: expose raw storages if needed. markRaw: Vue 2's reactive() converts nested objects in
+    // place and unwraps their refs, which would break `items.value` inside the storages.
+    historyStorage: markRaw(historyStorage),
+    favoritesStorage: markRaw(favoritesStorage),
   };
-});
+}
+
+export const useHistoryStore: () => ExplorerStore<ReturnType<typeof historyStoreSetup>> = defineExplorerStore(
+  'history',
+  historyStoreSetup,
+);
 
 // ==================== Reusable Query Storage Logic ====================
 

@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { clsx } from '../../lib/clsx';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 
 const props = defineProps<{
   markdown: string;

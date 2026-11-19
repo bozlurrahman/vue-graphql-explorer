@@ -2,9 +2,9 @@
 import type { ExecutionResult, FragmentDefinitionNode } from 'graphql';
 import { print } from 'graphql';
 import { getFragmentDependenciesForAST } from 'graphql-language-service';
-import { defineStore } from 'pinia';
+import { defineExplorerStore, type ExplorerStore } from './registry';
 import type { Observable } from 'subscriptions-transport-ws';
-import { ref } from 'vue';
+import { ref } from 'vue-demi';
 import {
   formatError,
   formatResult,
@@ -26,7 +26,9 @@ function isObservable(value: unknown): value is Observable<ExecutionResult> {
   );
 }
 
-export const useExecutionStore = defineStore('execution', () => {
+function executionStoreSetup() {
+  const editor = useEditorStore();
+  const history = useHistoryStore();
   const isFetching = ref(false);
   const isSubscribed = ref(false);
   const operationName = ref<string | null>(null);
@@ -67,9 +69,6 @@ export const useExecutionStore = defineStore('execution', () => {
 
     isFetching.value = true;
     const runId = ++queryIdCounter.value;
-
-    const editor = useEditorStore();
-    const history = useHistoryStore();
 
     const setResponse = (value: string) => {
       editor.responseEditor?.setValue(value);
@@ -222,4 +221,9 @@ export const useExecutionStore = defineStore('execution', () => {
     run,
     stop,
   };
-});
+}
+
+export const useExecutionStore: () => ExplorerStore<ReturnType<typeof executionStoreSetup>> = defineExplorerStore(
+  'execution',
+  executionStoreSetup,
+);

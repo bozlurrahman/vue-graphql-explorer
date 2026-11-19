@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineExplorerStore, type ExplorerStore } from './registry';
+import { ref } from 'vue-demi';
 import type { StorageValue } from '../lib/explorer';
 
 const STORAGE_NAMESPACE = 'graphiql';
 
-export const useStorageStore = defineStore('storage', () => {
+function storageStoreSetup() {
   const data = ref<Record<string, StorageValue>>({});
 
   function key(name: string) {
@@ -105,4 +105,9 @@ export const useStorageStore = defineStore('storage', () => {
     remove,
     clear,
   };
-});
+}
+
+export const useStorageStore: () => ExplorerStore<ReturnType<typeof storageStoreSetup>> = defineExplorerStore(
+  'storage',
+  storageStoreSetup,
+);

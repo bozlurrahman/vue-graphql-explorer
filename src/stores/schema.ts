@@ -1,11 +1,11 @@
 // src/stores/schema.ts
 import type { GraphQLError, GraphQLSchema } from 'graphql';
 import { buildClientSchema, getIntrospectionQuery } from 'graphql';
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineExplorerStore, type ExplorerStore } from './registry';
+import { ref, shallowRef } from 'vue-demi';
 
-export const useSchemaStore = defineStore('schema', () => {
-  const schema = ref<GraphQLSchema | null>(null);
+function schemaStoreSetup() {
+  const schema = shallowRef<GraphQLSchema | null>(null);
   const isFetching = ref(false);
   const fetchError = ref<string | null>(null);
   const validationErrors = ref<GraphQLError[]>([]);
@@ -50,4 +50,9 @@ export const useSchemaStore = defineStore('schema', () => {
     introspect,
     validationErrors,
   };
-});
+}
+
+export const useSchemaStore: () => ExplorerStore<ReturnType<typeof schemaStoreSetup>> = defineExplorerStore(
+  'schema',
+  schemaStoreSetup,
+);

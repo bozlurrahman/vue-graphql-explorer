@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import type { GraphQLType } from 'graphql';
 import { isListType, isNonNullType } from 'graphql';
+import { useDocumentationStore } from '../../stores/documentation';
 
 defineProps<{
   type: GraphQLType;

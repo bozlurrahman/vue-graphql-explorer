@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import type { GraphQLNamedType } from 'graphql';
 import { isAbstractType, isInterfaceType } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import { useSchemaStore } from '../../stores/schema';
 import ExplorerSection from './ExplorerSection.vue';
 import TypeLink from './TypeLink.vue';

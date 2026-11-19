@@ -11,9 +11,9 @@
       <tbody>
         <tr v-for="[title, keys] in SHORT_KEYS" :key="title">
           <td>
-            <template v-for="(key, i) in keys" :key="key">
-              <code class="graphiql-key">{{ key }}</code>
-              <span v-if="i < keys.length - 1">+</span>
+            <template v-for="(key, i) in keys">
+              <code :key="`key-${key}`" class="graphiql-key">{{ key }}</code>
+              <span v-if="i < keys.length - 1" :key="`plus-${key}`">+</span>
             </template>
           </td>
 

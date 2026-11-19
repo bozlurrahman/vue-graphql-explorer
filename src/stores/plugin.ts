@@ -1,12 +1,12 @@
 // src/stores/plugin.ts
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineExplorerStore, type ExplorerStore } from './registry';
+import { ref } from 'vue-demi';
 import { DOC_EXPLORER_PLUGIN, HISTORY_PLUGIN, type GraphiQLPlugin } from '../lib/explorer';
 // import { useStorageStore } from './storage';
 
 // const STORAGE_KEY_PLUGIN = 'visiblePlugin';
 
-export const usePluginStore = defineStore('plugin', () => {
+function pluginStoreSetup() {
   // const storage = useStorageStore();
   const plugins = ref<GraphiQLPlugin[]>([DOC_EXPLORER_PLUGIN, HISTORY_PLUGIN]);
   const visiblePlugin = ref<GraphiQLPlugin | null>(null);
@@ -53,4 +53,9 @@ export const usePluginStore = defineStore('plugin', () => {
     initialize,
     registerPlugins,
   };
-});
+}
+
+export const usePluginStore: () => ExplorerStore<ReturnType<typeof pluginStoreSetup>> = defineExplorerStore(
+  'plugin',
+  pluginStoreSetup,
+);

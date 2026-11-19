@@ -1,38 +1,40 @@
 <!-- components/gql/doc/SchemaDocumentation.vue -->
 <template>
-  <MarkdownContent
-    type="description"
-    :markdown="schema.description || 'A GraphQL schema provides a root type for each kind of operation.'"
-  ></MarkdownContent>
-  <ExplorerSection title="Root Types">
-    <div v-if="queryType">
-      <span class="graphiql-doc-explorer-root-type">query:</span>
+  <div class="graphiql-contents">
+    <MarkdownContent
+      type="description"
+      :markdown="schema.description || 'A GraphQL schema provides a root type for each kind of operation.'"
+    ></MarkdownContent>
+    <ExplorerSection title="Root Types">
+      <div v-if="queryType">
+        <span class="graphiql-doc-explorer-root-type">query:</span>
 
-      <TypeLink :type="queryType" />
-    </div>
-    <div v-if="mutationType">
-      <span class="graphiql-doc-explorer-root-type">mutation:</span>
-
-      <TypeLink :type="mutationType" />
-    </div>
-    <div v-if="subscriptionType">
-      <span class="graphiql-doc-explorer-root-type">subscription:</span>
-
-      <TypeLink :type="subscriptionType" />
-    </div>
-  </ExplorerSection>
-  <ExplorerSection title="All Schema Types">
-    <div v-if="typeMap">
-      <div v-for="type in allTypes" :key="type.name">
-        <TypeLink :type="type" />
+        <TypeLink :type="queryType" />
       </div>
-    </div>
-  </ExplorerSection>
+      <div v-if="mutationType">
+        <span class="graphiql-doc-explorer-root-type">mutation:</span>
+
+        <TypeLink :type="mutationType" />
+      </div>
+      <div v-if="subscriptionType">
+        <span class="graphiql-doc-explorer-root-type">subscription:</span>
+
+        <TypeLink :type="subscriptionType" />
+      </div>
+    </ExplorerSection>
+    <ExplorerSection title="All Schema Types">
+      <div v-if="typeMap">
+        <div v-for="type in allTypes" :key="type.name">
+          <TypeLink :type="type" />
+        </div>
+      </div>
+    </ExplorerSection>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { GraphQLSchema } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import ExplorerSection from './ExplorerSection.vue';
 import MarkdownContent from './MarkdownContent.vue';
 import TypeLink from './TypeLink.vue';

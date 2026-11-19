@@ -2,5 +2,5 @@
 import './styles/explorer.css';
 import './styles/simple-editor.css';
 
-export { default as GraphqlExplorer } from './components/GraphiQLInterface.vue';
+export { default as GraphqlExplorer } from './components/GraphqlExplorer.vue';
 export { createGraphiQLFetcher } from './lib/explorer';

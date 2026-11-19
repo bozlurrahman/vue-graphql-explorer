@@ -6,8 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ButtonHTMLAttributes } from 'vue';
-import { computed } from 'vue';
+import type { ButtonHTMLAttributes } from 'vue-demi';
+import { computed, ref } from 'vue-demi';
 
 export type ButtonState = 'success' | 'error' | undefined;
 
@@ -23,7 +23,7 @@ const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void;
 }>();
 
-const buttonRef = useTemplateRef<HTMLButtonElement>('buttonRef');
+const buttonRef = ref<HTMLButtonElement | null>(null);
 
 const buttonClasses = computed(() => [
   'graphiql-button',

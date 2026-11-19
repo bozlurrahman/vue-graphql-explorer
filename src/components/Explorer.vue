@@ -5,6 +5,9 @@ import {
   Kind,
   print,
   type ASTNode,
+  type FragmentDefinitionNode,
+  type GraphQLObjectType,
+  type GraphQLSchema,
   type DefinitionNode,
   type GraphQLArgument,
   type GraphQLEnumType,
@@ -14,7 +17,8 @@ import {
   type SelectionSetNode,
   type ValueNode,
 } from 'graphql';
-import { capitalize, computed, onMounted, provide, ref, toRef, type CSSProperties } from 'vue';
+import { computed, onMounted, provide, ref, toRef, type CSSProperties } from 'vue-demi';
+import { capitalize } from '../lib/strings';
 import { ExplorerContextKey } from '../composables/useExplorerContext';
 import {
   DEFAULT_DOCUMENT,
@@ -26,14 +30,47 @@ import {
   defaultGetDefaultFieldNames,
   defaultStyles,
   type AvailableFragments,
+  type Colors,
+  type GetDefaultScalarArgValue,
+  type MakeDefaultArg,
   type Field,
-  type GraphiQLExplorerProps,
   type NewOperationType,
   type StyleConfig,
 } from '../lib/explorer';
 import Operation from './explorer/Operation.vue';
+import { useEditorStore } from '../stores/editor';
+import { useSchemaStore } from '../stores/schema';
 
-const props = defineProps<GraphiQLExplorerProps>();
+// Local copy of GraphiQLExplorerProps (lib/explorer.ts): the Vue 2.7 compiler only reads prop types
+// declared in the same file. Keep both in step.
+interface Props {
+  query?: string;
+  width?: number;
+  title?: string;
+  schema?: GraphQLSchema | null;
+  onEdit?: (query: string) => void;
+  getDefaultFieldNames?: (type: GraphQLObjectType) => string[];
+  getDefaultScalarArgValue?: GetDefaultScalarArgValue;
+  makeDefaultArg?: MakeDefaultArg;
+  onToggleExplorer?: () => void;
+  explorerIsOpen?: boolean;
+  onRunOperation?: (name: string | null) => void;
+  colors?: Colors;
+  arrowOpen?: string | HTMLElement;
+  arrowClosed?: string | HTMLElement;
+  checkboxChecked?: string | HTMLElement;
+  checkboxUnchecked?: string | HTMLElement;
+  styles?: {
+    explorerActionsStyle?: CSSProperties;
+    buttonStyle?: CSSProperties;
+    actionButtonStyle?: CSSProperties;
+  };
+  showAttribution?: boolean;
+  hideActions?: boolean;
+  externalFragments?: FragmentDefinitionNode[];
+}
+
+const props = defineProps<Props>();
 const schemaStore = useSchemaStore();
 const editorStore = useEditorStore();
 
@@ -102,7 +139,7 @@ const showActions = computed(
   () => (queryFields.value || mutationFields.value || subscriptionFields.value) && !props.hideActions,
 );
 
-const explorerRef = useTemplateRef<HTMLElement>('explorerRef');
+const explorerRef = ref<HTMLElement | null>(null);
 
 const actionsStyles = computed(
   () =>
@@ -172,6 +209,9 @@ provide(ExplorerContextKey, {
 });
 
 onMounted(() => explorerRef.value?.scrollTo({ left: 0 }));
+
+// Vue 2.7 templates cannot hold TypeScript casts; casts live here.
+const asOperationType = (value: unknown) => value as OperationTypeNode;
 </script>
 
 <template>
@@ -200,7 +240,7 @@ onMounted(() => explorerRef.value?.scrollTo({ left: 0 }));
         type="button"
         class="toolbar-button"
         :style="addButtonStyles"
-        @click="addOperation(newOperationType as OperationTypeNode)"
+        @click="addOperation(asOperationType(newOperationType))"
       >
         <span>+</span>
       </button>

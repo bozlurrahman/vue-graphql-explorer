@@ -1,8 +1,10 @@
 <!-- src/components/gql/SettingsDialog.vue -->
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { vPortal } from '../directives/portal';
+import { onBeforeUnmount, ref } from 'vue-demi';
 import UnStyledButton from './UnStyledButton.vue';
 import { KeyboardShortcutIcon } from './icons';
+import { useEditorStore } from '../stores/editor';
 
 const show = ref(false);
 const persistHeaders = ref(false);
@@ -28,30 +30,31 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div title="Open short keys dialog">
-    <UnStyledButton type="button" data-value="short-keys" aria-label="Open short keys dialog" @click="open">
-      <KeyboardShortcutIcon aria-hidden="true" />
-    </UnStyledButton>
-  </div>
+  <div class="graphiql-contents">
+    <!-- Portal to body (was <Teleport>): first child, always rendered. -->
+    <div v-portal>
+      <div v-if="show" class="dialog-overlay" @click.self="close">
+        <div class="dialog" @click.stop>
+          <h2>Settings</h2>
 
-  <!-- Teleport to body = safest way to avoid unmount race conditions -->
-  <Teleport to="body">
-    <div v-if="show" class="dialog-overlay" @click.self="close">
-      <div class="dialog" @click.stop>
-        <h2>Settings</h2>
+          <label>
+            <input v-model="persistHeaders" type="checkbox" />
+            Persist Headers
+          </label>
 
-        <label>
-          <input v-model="persistHeaders" type="checkbox" />
-          Persist Headers
-        </label>
-
-        <div class="actions">
-          <button @click="save">Save</button>
-          <button @click="close">Cancel</button>
+          <div class="actions">
+            <button @click="save">Save</button>
+            <button @click="close">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
-  </Teleport>
+    <div title="Open short keys dialog">
+      <UnStyledButton type="button" data-value="short-keys" aria-label="Open short keys dialog" @click="open">
+        <KeyboardShortcutIcon aria-hidden="true" />
+      </UnStyledButton>
+    </div>
+  </div>
 </template>
 
 <style scoped>

@@ -59,13 +59,13 @@
       <FieldView
         v-for="fieldName in sortedFields"
         :key="fieldName"
-        :field="fields[fieldName]!"
+        :field="fields[fieldName]"
         :selections="childSelections"
         :definition="props.definition"
         :available-fragments="props.availableFragments"
         @modify-selections="modifyChildSelections"
       />
-      <Fragment v-if="isInterfaceType(type) || isUnionType(type)">
+      <template v-if="isInterfaceType(type) || isUnionType(type)">
         <AbstractView
           v-for="possibleType in possibleTypes"
           :key="possibleType.name"
@@ -75,7 +75,7 @@
           :available-fragments="props.availableFragments"
           @modify-selections="modifyChildSelections"
         />
-      </Fragment>
+      </template>
     </div>
   </div>
 </template>
@@ -95,13 +95,14 @@ import {
   type SelectionNode,
   type SelectionSetNode,
 } from 'graphql';
-import { computed, Fragment, ref } from 'vue';
+import { computed, ref } from 'vue-demi';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import { defaultArgs, unwrapOutputType, type AvailableFragments, type Field, type Selections } from '../../lib/explorer';
 import AbstractView from './AbstractView.vue';
 import ArgView from './ArgView.vue';
 import Checkbox from './Checkbox.vue';
 import FragmentView from './FragmentView.vue';
+import { useSchemaStore } from '../../stores/schema';
 
 export type FieldViewProps = {
   field: Field;

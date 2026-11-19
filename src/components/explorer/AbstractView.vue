@@ -9,7 +9,7 @@
       <FieldView
         v-for="fieldName in sortedFields"
         :key="fieldName"
-        :field="fields[fieldName]!"
+        :field="fields[fieldName]"
         :selections="childSelections"
         :definition="props.definition"
         :implementing-type="props.implementingType"
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { Kind, type DefinitionNode, type GraphQLObjectType, type InlineFragmentNode } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import type { AvailableFragments, Selections } from '../../lib/explorer';
 import Checkbox from './Checkbox.vue';

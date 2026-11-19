@@ -1,7 +1,9 @@
 <!-- src/components/gql/VariableEditor.vue -->
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { ref, watch } from 'vue-demi';
 import { useSimpleEditor } from '../composables/useSimpleEditor';
+import { useEditorStore } from '../stores/editor';
+import { useExecutionStore } from '../stores/execution';
 
 // ── Props & emits ────────────────────────────────────────────────────────────
 const props = defineProps<{
@@ -15,7 +17,7 @@ const editorStore = useEditorStore();
 const executionCtx = useExecutionStore();
 
 // ── Editor init ──────────────────────────────────────────────────────────────
-const containerRef = useTemplateRef<HTMLDivElement>('container');
+const containerRef = ref<HTMLDivElement | null>(null);
 
 const editor = useSimpleEditor(containerRef, {
   mode: 'graphql-variables', // JSON-like tokenizer
@@ -53,7 +55,7 @@ function handleKeyDown(e: KeyboardEvent) {
 
 <template>
   <div
-    ref="container"
+    ref="containerRef"
     :class="['graphiql-editor', 'se-wrapper', { hidden: props.isHidden }]"
     @keydown="handleKeyDown"
   />

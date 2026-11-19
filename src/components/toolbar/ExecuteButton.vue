@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue-demi';
 import PlayIcon from '../icons/play.svg?raw';
 import StopIcon from '../icons/stop.svg?raw';
+import { useEditorStore } from '../../stores/editor';
+import { useExecutionStore } from '../../stores/execution';
 
 const execution = useExecutionStore();
 const editorStore = useEditorStore();
@@ -29,28 +31,30 @@ const toggle = () => {
 </script>
 
 <template>
-  <button
-    class="execute-btn"
-    :class="{ running: isRunning }"
-    :title="isRunning ? 'Stop execution' : 'Execute query (Ctrl+Enter)'"
-    @click="toggle"
-  >
-    <div v-if="isRunning" v-html="StopIcon"></div>
-    <div v-else v-html="PlayIcon"></div>
-  </button>
-  <div v-if="showDropdown && editorStore.activeOperations.length > 1" class="dropdown-menu">
-    <div
-      v-for="(operation, index) in editorStore.activeOperations"
-      :key="index"
-      class="dropdown-item"
-      @click.stop="
-        () => {
-          execution.run(operation.name?.value);
-          showDropdown = 0;
-        }
-      "
+  <div class="graphiql-contents">
+    <button
+      class="execute-btn"
+      :class="{ running: isRunning }"
+      :title="isRunning ? 'Stop execution' : 'Execute query (Ctrl+Enter)'"
+      @click="toggle"
     >
-      {{ operation.name?.value || `Unnamed` }}
+      <div v-if="isRunning" v-html="StopIcon"></div>
+      <div v-else v-html="PlayIcon"></div>
+    </button>
+    <div v-if="showDropdown && editorStore.activeOperations.length > 1" class="dropdown-menu">
+      <div
+        v-for="(operation, index) in editorStore.activeOperations"
+        :key="index"
+        class="dropdown-item"
+        @click.stop="
+          () => {
+            execution.run(operation.name?.value);
+            showDropdown = 0;
+          }
+        "
+      >
+        {{ operation.name?.value || `Unnamed` }}
+      </div>
     </div>
   </div>
 </template>

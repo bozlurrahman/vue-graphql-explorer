@@ -24,12 +24,13 @@ import {
   type ValueNode,
   type VariableDefinitionNode,
 } from 'graphql';
-import { computed, ref } from 'vue';
+import { computed, ref } from 'vue-demi';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import { coerceArgValue, DEFAULT_QUERY, unwrapInputType, type Field, type Selections } from '../../lib/explorer';
 import Checkbox from './Checkbox.vue';
 import InputArgView from './InputArgView.vue';
 import ScalarInput from './ScalarInput.vue';
+import { useEditorStore } from '../../stores/editor';
 
 interface AbstractArgViewProps {
   argValue: ValueNode | null;
@@ -218,7 +219,9 @@ function variablize() {
      * we may have caused their variable definitions to become unused.
      * Keep track and remove any variable definitions with 1 or fewer usages.
      * */
-    const cleanedDefaultValue = visit(argValue, {
+    // Runs for the usage counts only; its result (the cleaned default value) is unused on purpose,
+    // see the disabled "original line" below.
+    visit(argValue, {
       Variable(node) {
         const varName = node.name.value;
         const varDef = variableDefinitionByName(varName);
@@ -377,6 +380,9 @@ function toggleArg() {
   else emit('remove-arg');
   displayArgActions.value = shouldAdd;
 }
+
+// Vue 2.7 templates cannot hold TypeScript casts; casts live here.
+const emptyValueNode = {} as ValueNode;
 </script>
 
 <template>
@@ -433,7 +439,7 @@ function toggleArg() {
     <ScalarInput
       v-if="inputComponent?.type === 'scalar'"
       :arg="arg"
-      :arg-value="argValue || ({} as ValueNode)"
+      :arg-value="argValue || emptyValueNode"
       @set-arg-value="event => emit('set-arg-value', event)"
     />
 

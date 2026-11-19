@@ -2475,3 +2475,8 @@ button.graphiql-tab-add > svg {
 #graphiql {
   height: 100vh;
 }
+
+/* Single-root wrapper for Vue 2 (no fragments) that adds no box of its own. */
+.graphiql-contents {
+  display: contents;
+}

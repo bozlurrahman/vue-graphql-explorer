@@ -1,4 +1,5 @@
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
+import { useEditorStore } from '../stores/editor';
 
 export type EditorType = 'query' | 'variable' | 'header';
 

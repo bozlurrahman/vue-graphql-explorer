@@ -51,12 +51,16 @@ import {
 import type { Client } from 'graphql-ws';
 import { meros } from 'meros';
 import type { ClientOptions } from 'subscriptions-transport-ws';
-import type { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue-demi';
 import Documentation from '../components/Documentation.vue';
 import Explorer from '../components/Explorer.vue';
 import History from '../components/history/History.vue';
 import type { AddSuffix } from '../types/common';
 import { isAsyncIterable, makeAsyncIterableIteratorFromSink } from './iterator';
+import { defineComponent, markRaw } from 'vue-demi';
+import { hWithProps } from './h';
+import type { Component, Ref } from 'vue-demi';
+import type { SimpleEditorInstance } from '../composables/useSimpleEditor';
 
 export const isMacOs = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
 export const THEMES = ['light', 'dark', 'system'] as const;
@@ -206,7 +210,7 @@ export type Colors = {
 };
 
 export type Styles = {
-  explorerActionsStyle: CSSProperties; // Use import { CSSProperties } from 'vue'; if needed
+  explorerActionsStyle: CSSProperties; // Use import { CSSProperties } from 'vue-demi'; if needed
   buttonStyle: CSSProperties;
   actionButtonStyle: CSSProperties;
 };
@@ -790,10 +794,12 @@ export const HISTORY_PLUGIN = markRaw({
 export const ExplorerPlugin = markRaw({
   title: 'Explorer',
   icon: `<svg style="width: 20px;" stroke-width="1.5" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 6H20M22 6H20M20 6V4M20 6V8"></path><path d="M21 20H2C2 20 2 19 2 19V11H21C21 11 22 11 22 11V19C22 19 21 20 21 20Z"></path><path d="M2 11V4C2 4 2 4 2 4H8C8 4 9 4 9 4L12 6C12 6 12 7 12 7H14"></path></svg>`,
-  content: () =>
-    h(Explorer, {
-      query: '',
-    }),
+  // A component, not a bare render function: Vue 2 treats a plain function in <component :is> as an
+  // async component factory.
+  content: defineComponent({
+    name: 'ExplorerPluginContent',
+    render: () => hWithProps(Explorer, { query: '' }),
+  }),
 });
 
 function stringify(obj: unknown): string {
@@ -1364,7 +1370,7 @@ export function tryParseJsonObject({
   try {
     parsed = json && json.trim() !== '' ? JSON.parse(json) : undefined;
   } catch (error) {
-    throw new Error(`${errorMessageParse}: ${error instanceof Error ? error.message : error}.`);
+    throw new Error(`${errorMessageParse}: ${error instanceof Error ? error.message : error}.`, { cause: error });
   }
 
   const isObject = typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed);
@@ -1565,6 +1571,7 @@ export async function createWebsocketsFetcherFromUrl(
     if (errorHasCode(err) && err.code === 'MODULE_NOT_FOUND') {
       throw new Error(
         "You need to install the 'graphql-ws' package to use websockets when passing a 'subscriptionUrl'",
+        { cause: err },
       );
     }
     console.error(`Error creating websocket client for ${url}`, err);

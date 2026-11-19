@@ -9,15 +9,15 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
+import { defineExplorerStore, type ExplorerStore } from './registry';
+import { shallowRef, watch } from 'vue-demi';
 import type { ExplorerNavStack, ExplorerNavStackItem } from '../lib/explorer';
 import { useSchemaStore } from './schema';
 
 const initialNavStackItem: ExplorerNavStackItem = { name: 'Explorer' };
 
-export const useExplorerStore = defineStore('explorer', () => {
-  const explorerNavStack = ref<ExplorerNavStack>([initialNavStackItem]);
+function explorerStoreSetup() {
+  const explorerNavStack = shallowRef<ExplorerNavStack>([initialNavStackItem]);
 
   const schemaStore = useSchemaStore();
 
@@ -112,4 +112,9 @@ export const useExplorerStore = defineStore('explorer', () => {
   }
 
   return { explorerNavStack, push, pop, reset };
-});
+}
+
+export const useExplorerStore: () => ExplorerStore<ReturnType<typeof explorerStoreSetup>> = defineExplorerStore(
+  'explorer',
+  explorerStoreSetup,
+);

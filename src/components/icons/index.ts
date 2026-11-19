@@ -1,4 +1,5 @@
-import { defineComponent, h } from 'vue';
+import { defineComponent } from 'vue-demi';
+import { hWithHtml } from '../../lib/h';
 
 // Import SVG modules
 import _ArgumentIcon from './argument.svg?raw';
@@ -37,7 +38,7 @@ function generateIcon(svg: string) {
   return defineComponent({
     name: 'GeneratedIcon',
     render() {
-      return h('span', { innerHTML: svg });
+      return hWithHtml('span', svg);
     },
   });
 }

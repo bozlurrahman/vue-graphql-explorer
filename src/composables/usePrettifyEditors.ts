@@ -1,4 +1,5 @@
 import { parse, print } from 'graphql';
+import { useEditorStore } from '../stores/editor';
 
 export function usePrettifyEditors() {
   const { queryEditor, headerEditor, variableEditor } = useEditorStore();

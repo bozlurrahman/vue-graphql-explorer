@@ -1,8 +1,10 @@
 <!-- src/components/gql/ResponseEditor.vue -->
 <script setup lang="ts">
-import { useTemplateRef, watch } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue-demi';
 import { useSimpleEditor } from '../composables/useSimpleEditor';
 import { formatError } from '../lib/explorer';
+import { useEditorStore } from '../stores/editor';
+import { useSchemaStore } from '../stores/schema';
 
 // ── Stores ───────────────────────────────────────────────────────────────────
 const { fetchError, validationErrors } = useSchemaStore();
@@ -10,7 +12,7 @@ const editorStore = useEditorStore();
 const { initialResponse, setResponseEditor } = editorStore;
 
 // ── Editor init ──────────────────────────────────────────────────────────────
-const containerRef = useTemplateRef<HTMLDivElement>('container');
+const containerRef = ref<HTMLDivElement | null>(null);
 
 const editor = useSimpleEditor(containerRef, {
   mode: 'graphql-results',
@@ -45,7 +47,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="container" class="result-window se-wrapper" />
+  <div ref="containerRef" class="result-window se-wrapper" />
 </template>
 
 <style scoped>

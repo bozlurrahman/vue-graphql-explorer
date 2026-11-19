@@ -1,7 +1,9 @@
 <!-- src/components/gql/HeaderEditor.vue -->
 <script setup lang="ts">
-import { useTemplateRef } from 'vue';
+import { ref, watch } from 'vue-demi';
 import { useSimpleEditor } from '../composables/useSimpleEditor';
+import { useEditorStore } from '../stores/editor';
+import { useExecutionStore } from '../stores/execution';
 
 // ── Props ────────────────────────────────────────────────────────────────────
 const props = defineProps<{ isHidden?: boolean }>();
@@ -10,12 +12,9 @@ const props = defineProps<{ isHidden?: boolean }>();
 const editorStore = useEditorStore();
 const executionCtx = useExecutionStore();
 const { initialHeaders } = editorStore;
-const executionContext = useExecutionStore();
-const merge = useMergeQuery();
-const prettify = usePrettifyEditors();
 
 // ── Editor init ──────────────────────────────────────────────────────────────
-const containerRef = useTemplateRef<HTMLElement>('container');
+const containerRef = ref<HTMLElement | null>(null);
 
 const editor = useSimpleEditor(containerRef, {
   mode: 'json',
@@ -45,7 +44,7 @@ function handleKeyDown(e: KeyboardEvent) {
 
 <template>
   <div
-    ref="container"
+    ref="containerRef"
     :class="['graphiql-editor', 'se-wrapper', { hidden: props.isHidden }]"
     @keydown="handleKeyDown"
   />

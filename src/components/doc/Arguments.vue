@@ -1,21 +1,23 @@
 <!-- components/gql/doc/Arguments.vue -->
 <template>
-  <ExplorerSection v-if="args.length > 0" title="Arguments">
-    <Argument v-for="arg in args" :key="arg.name" :arg="arg" />
-  </ExplorerSection>
-  <template v-if="deprecatedArgs.length > 0">
-    <template v-if="showDeprecated || args.length === 0">
-      <ExplorerSection title="Deprecated Arguments">
-        <Argument v-for="arg in deprecatedArgs" :key="arg.name" :arg="arg" />
-      </ExplorerSection>
+  <div class="graphiql-contents">
+    <ExplorerSection v-if="args.length > 0" title="Arguments">
+      <Argument v-for="arg in args" :key="arg.name" :arg="arg" />
+    </ExplorerSection>
+    <template v-if="deprecatedArgs.length > 0">
+      <template v-if="showDeprecated || args.length === 0">
+        <ExplorerSection title="Deprecated Arguments">
+          <Argument v-for="arg in deprecatedArgs" :key="arg.name" :arg="arg" />
+        </ExplorerSection>
+      </template>
+      <button v-else type="button" @click="showDeprecated = true">Show Deprecated Arguments</button>
     </template>
-    <button v-else type="button" @click="showDeprecated = true">Show Deprecated Arguments</button>
-  </template>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { GraphQLArgument } from 'graphql';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue-demi';
 import type { ExplorerFieldDef } from '../../lib/explorer';
 import Argument from './Argument.vue';
 import ExplorerSection from './ExplorerSection.vue';
@@ -25,7 +27,7 @@ const props = defineProps<{
 }>();
 
 const showDeprecated = ref(false);
-const deprecatedArgs = ref<GraphQLArgument[]>([]);
+const deprecatedArgs = shallowRef<GraphQLArgument[]>([]);
 
 const args = computed<GraphQLArgument[]>(() => {
   const result: GraphQLArgument[] = [];

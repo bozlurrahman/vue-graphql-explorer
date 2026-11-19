@@ -1,22 +1,24 @@
 <!-- components/gql/doc/EnumValues.vue -->
 <template>
-  <ExplorerSection v-if="values.length > 0" title="Enum Values">
-    <EnumValue v-for="value in values" :key="value.name" :value="value" />
-  </ExplorerSection>
-  <template v-if="deprecatedValues.length > 0">
-    <template v-if="showDeprecated || values.length === 0">
-      <ExplorerSection title="Deprecated Enum Values">
-        <EnumValue v-for="value in deprecatedValues" :key="value.name" :value="value" />
-      </ExplorerSection>
+  <div class="graphiql-contents">
+    <ExplorerSection v-if="values.length > 0" title="Enum Values">
+      <EnumValue v-for="value in values" :key="value.name" :value="value" />
+    </ExplorerSection>
+    <template v-if="deprecatedValues.length > 0">
+      <template v-if="showDeprecated || values.length === 0">
+        <ExplorerSection title="Deprecated Enum Values">
+          <EnumValue v-for="value in deprecatedValues" :key="value.name" :value="value" />
+        </ExplorerSection>
+      </template>
+      <button v-else type="button" @click="showDeprecated = true">Show Deprecated Values</button>
     </template>
-    <button v-else type="button" @click="showDeprecated = true">Show Deprecated Values</button>
-  </template>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { GraphQLEnumValue, GraphQLNamedType } from 'graphql';
 import { isEnumType } from 'graphql';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue-demi';
 import EnumValue from './EnumValue.vue';
 import ExplorerSection from './ExplorerSection.vue';
 
@@ -43,5 +45,5 @@ const values = computed<GraphQLEnumValue[]>(() => {
   return result;
 });
 
-const deprecatedValues = ref<GraphQLEnumValue[]>([]);
+const deprecatedValues = shallowRef<GraphQLEnumValue[]>([]);
 </script>

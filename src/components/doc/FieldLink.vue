@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import type { ExplorerFieldDef } from '../../lib/explorer';
+import { useDocumentationStore } from '../../stores/documentation';
 
 const props = defineProps<{
   field: ExplorerFieldDef;

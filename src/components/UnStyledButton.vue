@@ -6,8 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ButtonHTMLAttributes } from 'vue';
-import { computed } from 'vue';
+import type { ButtonHTMLAttributes } from 'vue-demi';
+import { computed } from 'vue-demi';
 interface UnStyledButtonProps extends /* @vue-ignore */ ButtonHTMLAttributes {
   [key: string]: any;
 }

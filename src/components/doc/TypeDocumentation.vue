@@ -1,12 +1,14 @@
 <!-- components/gql/doc/TypeDocumentation.vue -->
 <template>
-  <template v-if="isNamedType(type)">
-    <MarkdownContent v-if="type.description" type="description" :markdown="type.description" />
-    <ImplementsInterfaces :type="type" />
-    <Fields :type="type" />
-    <EnumValues :type="type" />
-    <PossibleTypes :type="type" />
-  </template>
+  <div class="graphiql-contents">
+    <template v-if="isNamedType(type)">
+      <MarkdownContent v-if="type.description" type="description" :markdown="type.description" />
+      <ImplementsInterfaces :type="type" />
+      <Fields :type="type" />
+      <EnumValues :type="type" />
+      <PossibleTypes :type="type" />
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">

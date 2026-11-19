@@ -8,7 +8,7 @@ import {
   getOperationFacts,
   type IPosition,
 } from 'graphql-language-service';
-import { useTemplateRef } from 'vue';
+import { ref, watch } from 'vue-demi';
 import {
   useSimpleEditor,
   type ClickInfo,
@@ -16,6 +16,9 @@ import {
   type LintDiagnostic,
 } from '../composables/useSimpleEditor';
 import { getSelectedOperationName, type SimpleEditorInstanceWithOperationFacts } from '../lib/explorer';
+import { useEditorStore } from '../stores/editor';
+import { useExecutionStore } from '../stores/execution';
+import { useSchemaStore } from '../stores/schema';
 
 // ── Stores ───────────────────────────────────────────────────────────────────
 const executionCtx = useExecutionStore();
@@ -59,7 +62,7 @@ async function handleLint(value: string): Promise<LintDiagnostic[]> {
       from: posToOffset(value, d.range.start.line, d.range.start.character),
       to: posToOffset(value, d.range.end.line, d.range.end.character),
       severity: (d.severity === 1 ? 'error' : d.severity === 2 ? 'warning' : 'info') as LintDiagnostic['severity'],
-      message: d.message,
+      message: typeof d.message === 'string' ? d.message : d.message.value,
     }));
   } catch {
     return [];
@@ -120,7 +123,7 @@ function escHtml(s: string) {
 }
 
 // ── Editor init ───────────────────────────────────────────────────────────────
-const containerRef = useTemplateRef<HTMLDivElement>('container');
+const containerRef = ref<HTMLDivElement | null>(null);
 
 function getAndUpdateOperationFacts(editorInstance: SimpleEditorInstanceWithOperationFacts) {
   const schema = schemaStore.schema as GraphQLSchema | null;
@@ -187,7 +190,7 @@ function handleKeyDown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <div ref="container" class="graphiql-editor se-wrapper" @keydown="handleKeyDown" />
+  <div ref="containerRef" class="graphiql-editor se-wrapper" @keydown="handleKeyDown" />
 </template>
 
 <style scoped>

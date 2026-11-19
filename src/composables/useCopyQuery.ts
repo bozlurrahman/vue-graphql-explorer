@@ -1,5 +1,6 @@
 // composables/useCopyQuery.ts
 import copyToClipboard from 'copy-to-clipboard';
+import { useEditorStore } from '../stores/editor';
 
 export type UseCopyQueryArgs = {
   onCopyQuery?: (query: string) => void;

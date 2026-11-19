@@ -1,9 +1,11 @@
 <!-- src/components/gql/Tabs.vue -->
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue-demi';
 import ToolTip from './ToolTip.vue';
 import { CloseIcon, PlusIcon } from './icons';
 import UnStyledButton from './UnStyledButton.vue';
+import { useEditorStore } from '../stores/editor';
+import { useExecutionStore } from '../stores/execution';
 
 // const emit = defineEmits(['reorder', 'close']);
 const editorStore = useEditorStore();

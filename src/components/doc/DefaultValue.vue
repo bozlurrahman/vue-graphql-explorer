@@ -1,16 +1,18 @@
 <!-- components/gql/doc/DefaultValue.vue -->
 <template>
-  <template v-if="'defaultValue' in field && field.defaultValue !== undefined">
-    <template v-if="ast">
-      <span>=</span>
-      <span class="graphiql-doc-explorer-default-value">{{ print(ast) }}</span>
+  <span class="graphiql-contents">
+    <template v-if="'defaultValue' in field && field.defaultValue !== undefined">
+      <template v-if="ast">
+        <span>=</span>
+        <span class="graphiql-doc-explorer-default-value">{{ print(ast) }}</span>
+      </template>
     </template>
-  </template>
+  </span>
 </template>
 
 <script setup lang="ts">
 import { astFromValue, print } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import type { ExplorerFieldDef } from '../../lib/explorer';
 
 const props = defineProps<{

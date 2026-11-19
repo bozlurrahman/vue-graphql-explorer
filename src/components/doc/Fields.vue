@@ -1,22 +1,24 @@
 <!-- components/gql/doc/Fields.vue -->
 <template>
-  <ExplorerSection v-if="fields.length > 0" title="Fields">
-    <Field v-for="field in fields" :key="field.name" :field="field" />
-  </ExplorerSection>
-  <template v-if="deprecatedFields.length > 0">
-    <template v-if="showDeprecated || fields.length === 0">
-      <ExplorerSection title="Deprecated Fields">
-        <Field v-for="field in deprecatedFields" :key="field.name" :field="field" />
-      </ExplorerSection>
+  <div class="graphiql-contents">
+    <ExplorerSection v-if="fields.length > 0" title="Fields">
+      <Field v-for="field in fields" :key="field.name" :field="field" />
+    </ExplorerSection>
+    <template v-if="deprecatedFields.length > 0">
+      <template v-if="showDeprecated || fields.length === 0">
+        <ExplorerSection title="Deprecated Fields">
+          <Field v-for="field in deprecatedFields" :key="field.name" :field="field" />
+        </ExplorerSection>
+      </template>
+      <button v-else type="button" @click="showDeprecated = true">Show Deprecated Fields</button>
     </template>
-    <button v-else type="button" @click="showDeprecated = true">Show Deprecated Fields</button>
-  </template>
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { GraphQLNamedType } from 'graphql';
 import { isInputObjectType, isInterfaceType, isObjectType } from 'graphql';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue-demi';
 import type { ExplorerFieldDef } from '../../lib/explorer';
 import ExplorerSection from './ExplorerSection.vue';
 import Field from './Field.vue';
@@ -50,5 +52,5 @@ const fields = computed<ExplorerFieldDef[]>(() => {
   return result;
 });
 
-const deprecatedFields = ref<ExplorerFieldDef[]>([]);
+const deprecatedFields = shallowRef<ExplorerFieldDef[]>([]);
 </script>

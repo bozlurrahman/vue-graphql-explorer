@@ -6,11 +6,11 @@
       <template v-if="args.length > 0">
         <span>(</span>
         <span>
-          <template v-for="arg in args" :key="arg.name">
-            <div v-if="args.length > 1" class="graphiql-doc-explorer-argument-multiple">
+          <template v-for="arg in args">
+            <div v-if="args.length > 1" :key="arg.name" class="graphiql-doc-explorer-argument-multiple">
               <Argument :arg="arg" inline />
             </div>
-            <Argument v-else :arg="arg" inline />
+            <Argument v-else :key="arg.name" :arg="arg" inline />
           </template>
         </span>
         <span>)</span>
@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import type { GraphQLArgument } from 'graphql';
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import type { ExplorerFieldDef } from '../../lib/explorer';
 import Argument from './Argument.vue';
 import DefaultValue from './DefaultValue.vue';

@@ -1,6 +1,6 @@
 <!-- src/components/gql/GraphiQLInterface.vue -->
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue';
+import { computed, markRaw, ref, toRaw } from 'vue-demi';
 import '../styles/explorer.css';
 import '../styles/simple-editor.css';
 import {
@@ -26,41 +26,41 @@ import ExecuteButton from './toolbar/ExecuteButton.vue';
 import ToolbarButton from './toolbar/ToolbarButton.vue';
 import UnStyledButton from './UnStyledButton.vue';
 import VariableEditor from './VariableEditor.vue';
-import { graphqlHttpUrl, graphqlWsUrl } from '~/lib/apiUrl';
+import { useEditorStore } from '../stores/editor';
+import { useExecutionStore } from '../stores/execution';
+import { usePluginStore } from '../stores/plugin';
+import { useSchemaStore } from '../stores/schema';
 
-const pluginResizeFirstRef = useTemplateRef<HTMLElement>('pluginResizeFirstRef');
-const pluginResizeDragBarRef = useTemplateRef<HTMLElement>('pluginResizeDragBarRef');
-const pluginResizeSecondRef = useTemplateRef<HTMLElement>('pluginResizeSecondRef');
+const pluginResizeFirstRef = ref<HTMLElement | null>(null);
+const pluginResizeDragBarRef = ref<HTMLElement | null>(null);
+const pluginResizeSecondRef = ref<HTMLElement | null>(null);
 
-const editorResizeFirstRef = useTemplateRef<HTMLElement>('editorResizeFirstRef');
-const editorResizeDragBarRef = useTemplateRef<HTMLElement>('editorResizeDragBarRef');
-const editorResizeSecondRef = useTemplateRef<HTMLElement>('editorResizeSecondRef');
+const editorResizeFirstRef = ref<HTMLElement | null>(null);
+const editorResizeDragBarRef = ref<HTMLElement | null>(null);
+const editorResizeSecondRef = ref<HTMLElement | null>(null);
 
-const editorToolsResizeFirstRef = useTemplateRef<HTMLElement>('editorToolsResizeFirstRef');
-const editorToolsResizeDragBarRef = useTemplateRef<HTMLElement>('editorToolsResizeDragBarRef');
-const editorToolsResizeSecondRef = useTemplateRef<HTMLElement>('editorToolsResizeSecondRef');
+const editorToolsResizeFirstRef = ref<HTMLElement | null>(null);
+const editorToolsResizeDragBarRef = ref<HTMLElement | null>(null);
+const editorToolsResizeSecondRef = ref<HTMLElement | null>(null);
 
 const editorStore = useEditorStore();
 editorStore.init({});
 
-const route = useRoute();
+// Temporary props until EXP-04 defines the full public API on GraphqlExplorer.vue.
+const props = defineProps<{
+  url: string;
+  wsUrl?: string;
+}>();
 
-const graphqlUrl = computed(() => {
-  const url = route.query.url;
-  if (!url || Array.isArray(url)) return graphqlHttpUrl();
-  return url;
-});
+const graphqlUrl = computed(() => props.url);
 
+// Subscriptions run in the browser only. Without `wsUrl`, derive ws(s):// from `url`.
 const websocketUrl = computed(() => {
-  if (import.meta.server) return ''; // subscriptions run in the browser only
-  if (!route.query.url) return graphqlWsUrl();
-  try {
-    const url = new URL(graphqlUrl.value as string);
-    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-    return url.toString();
-  } catch {
-    return graphqlWsUrl();
-  }
+  if (props.wsUrl) return props.wsUrl;
+  if (typeof window === 'undefined') return '';
+  const url = new URL(props.url, window.location.href);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.toString();
 });
 
 const legacyWsClient = ref<SubscriptionClient | null>(null);
@@ -176,7 +176,7 @@ const toggleEditorTools = () => {
             type="button"
             :disabled="schemaStore.isFetching"
             aria-label="Re-fetch GraphQL schema"
-            @click="schemaStore.introspect"
+            @click="schemaStore.introspect(graphqlUrl)"
           >
             <ReloadIcon :class="{ 'graphiql-spin': schemaStore.isFetching }" aria-hidden="true" />
           </UnStyledButton>

@@ -26,9 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue-demi';
 import HistoryItem from './HistoryItem.vue';
 import Button from '../Button.vue';
+import { useHistoryStore } from '../../stores/history';
 
 const { items: all, deleteFromHistory } = useHistoryStore();
 

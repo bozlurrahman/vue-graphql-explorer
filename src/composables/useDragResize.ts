@@ -1,6 +1,8 @@
 // src/composables/useDragResize.ts
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue-demi';
 import debounce from '../lib/explorer';
+import type { Ref } from 'vue-demi';
+import { useStorageStore } from '../stores/storage';
 
 type ResizableElement = 'first' | 'second';
 

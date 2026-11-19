@@ -5,4 +5,8 @@ import vue from '@vitejs/plugin-vue';
 export default defineConfig({
   plugins: [vue()],
   resolve: { dedupe: ['vue', 'vue-demi', 'graphql'] },
+  // Same-origin proxy to the local intelli-app-operations server (no CORS); ws for subscriptions.
+  server: {
+    proxy: { '/graphql': { target: process.env.VITE_PROXY_TARGET ?? 'http://localhost:30011', ws: true } },
+  },
 });

@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { Kind, type GraphQLArgument, type ValueNode } from 'graphql';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue-demi';
 import { useExplorerContext } from '../../composables/useExplorerContext';
 import { unwrapInputType } from '../../lib/explorer';
 
@@ -31,7 +31,7 @@ const emit = defineEmits<{
 }>();
 
 const ctx = useExplorerContext();
-const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
+const inputRef = ref<HTMLInputElement | null>(null);
 
 const argType = computed(() => unwrapInputType(props.arg.type));
 const value = computed(() => {

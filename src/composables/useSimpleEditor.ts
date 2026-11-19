@@ -11,7 +11,7 @@
  * Zero external dependencies beyond Vue 3.
  */
 
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue-demi';
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 

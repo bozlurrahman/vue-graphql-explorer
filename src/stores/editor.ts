@@ -1,7 +1,7 @@
 // stores/editor.ts
 import type { DocumentNode, ExecutableDefinitionNode, FragmentDefinitionNode, ValidationRule } from 'graphql';
 import { Kind, parse, visit } from 'graphql';
-import { defineStore } from 'pinia';
+import { defineExplorerStore, type ExplorerStore } from './registry';
 import {
   DEFAULT_DOCUMENT,
   DEFAULT_QUERY,
@@ -17,21 +17,26 @@ import {
   type TabsState,
 } from '../lib/explorer';
 import { useStorageStore } from './storage';
+import { computed, ref, shallowRef } from 'vue-demi';
+import type { SimpleEditorInstance } from '../composables/useSimpleEditor';
 
-export const useEditorStore = defineStore('editor', () => {
+function editorStoreSetup() {
+  const storage = useStorageStore();
   const tabs = ref<TabState[]>([]);
   const activeTabIndex = ref(0);
-  const headerEditor = ref<SimpleEditorInstance | null>(null);
-  const queryEditor = ref<SimpleEditorInstanceWithOperationFacts | null>(null);
-  const variableEditor = ref<SimpleEditorInstance | null>(null);
-  const responseEditor = ref<SimpleEditorInstance | null>(null);
+  // Editor instances, the fragment Map and validation rules are replaced, never mutated in place:
+  // keep them raw (no deep proxies; Vue 2 cannot observe a Map anyway).
+  const headerEditor = shallowRef<SimpleEditorInstance | null>(null);
+  const queryEditor = shallowRef<SimpleEditorInstanceWithOperationFacts | null>(null);
+  const variableEditor = shallowRef<SimpleEditorInstance | null>(null);
+  const responseEditor = shallowRef<SimpleEditorInstance | null>(null);
   const shouldPersistHeaders = ref<boolean>(false);
   const initialQuery = ref('');
   const initialVariables = ref('');
   const initialHeaders = ref('');
   const initialResponse = ref('');
-  const externalFragments = ref(new Map<string, FragmentDefinitionNode>());
-  const validationRules = ref<ValidationRule[]>([]);
+  const externalFragments = shallowRef(new Map<string, FragmentDefinitionNode>());
+  const validationRules = shallowRef<ValidationRule[]>([]);
 
   const tabState = computed<TabsState>(() => ({
     tabs: tabs.value,
@@ -62,7 +67,6 @@ export const useEditorStore = defineStore('editor', () => {
     variables?: string;
     defaultHeaders?: string;
   }) {
-    const storage = useStorageStore();
     const storedState = storage?.get(STORAGE_KEY_TABS) ?? null;
 
     const tabState = getDefaultTabState({
@@ -182,7 +186,6 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   function storeTabs() {
-    const storage = useStorageStore();
     const serialized = serializeTabState(tabState.value, shouldPersistHeaders.value);
     storage?.set(STORAGE_KEY_TABS, serialized);
   }
@@ -231,4 +234,9 @@ export const useEditorStore = defineStore('editor', () => {
     setEditorValues,
     storeTabs,
   };
-});
+}
+
+export const useEditorStore: () => ExplorerStore<ReturnType<typeof editorStoreSetup>> = defineExplorerStore(
+  'editor',
+  editorStoreSetup,
+);

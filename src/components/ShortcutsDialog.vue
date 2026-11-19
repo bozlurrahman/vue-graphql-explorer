@@ -1,6 +1,7 @@
 <!-- src/components/gql/ShortcutsDialog.vue -->
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { vPortal } from '../directives/portal';
+import { onBeforeUnmount, ref } from 'vue-demi';
 import UnStyledButton from './UnStyledButton.vue';
 import { SettingsIcon } from './icons';
 
@@ -28,13 +29,8 @@ const shortcuts = [
 
 <template>
   <div>
-    <div title="Open settings dialog">
-      <UnStyledButton type="button" data-value="settings" aria-label="Open settings dialog" @click="open">
-        <SettingsIcon aria-hidden="true" />
-      </UnStyledButton>
-    </div>
-
-    <Teleport to="body">
+    <!-- Portal to body (was <Teleport>): first child, always rendered. -->
+    <div v-portal>
       <div v-if="show" class="dialog-overlay" @click.self="close">
         <div class="dialog" @click.stop>
           <h2>Keyboard Shortcuts</h2>
@@ -49,7 +45,12 @@ const shortcuts = [
           <button @click="show = false">Close</button>
         </div>
       </div>
-    </Teleport>
+    </div>
+    <div title="Open settings dialog">
+      <UnStyledButton type="button" data-value="settings" aria-label="Open settings dialog" @click="open">
+        <SettingsIcon aria-hidden="true" />
+      </UnStyledButton>
+    </div>
   </div>
 </template>
 
