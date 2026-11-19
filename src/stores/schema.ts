@@ -3,6 +3,8 @@ import type { GraphQLError, GraphQLSchema } from 'graphql';
 import { buildClientSchema, getIntrospectionQuery } from 'graphql';
 import { defineExplorerStore, type ExplorerStore } from './registry';
 import { ref, shallowRef } from 'vue-demi';
+import type { Fetcher } from '../lib/explorer';
+import { isAsyncIterable } from '../lib/iterator';
 
 function schemaStoreSetup() {
   const schema = shallowRef<GraphQLSchema | null>(null);
@@ -10,37 +12,37 @@ function schemaStoreSetup() {
   const fetchError = ref<string | null>(null);
   const validationErrors = ref<GraphQLError[]>([]);
 
-  // =============== REAL INTROSPECTION ===============
-  const introspect = async (url: string) => {
-    if (schema.value || isFetching.value) return;
+  // Introspection goes through the explorer's fetcher, so host headers (for example Authorization) apply.
+  const introspect = async (fetcher: Fetcher, { force = false }: { force?: boolean } = {}) => {
+    if (isFetching.value || (schema.value && !force)) return;
 
     isFetching.value = true;
     fetchError.value = null;
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: getIntrospectionQuery(),
-          operationName: 'IntrospectionQuery',
-        }),
-      });
+      let result: any = await fetcher({ query: getIntrospectionQuery(), operationName: 'IntrospectionQuery' });
+      if (isAsyncIterable(result)) {
+        const first = await (result as AsyncIterable<unknown>)[Symbol.asyncIterator]().next();
+        result = first.value;
+      }
 
-      const result = await response.json();
-
-      if (result.data?.__schema) {
+      if (result?.data?.__schema) {
         schema.value = buildClientSchema(result.data);
-        console.log('✅ Schema loaded successfully');
       } else {
-        throw new Error('Invalid introspection response');
+        const message = result?.errors?.[0]?.message;
+        throw new Error(message ? `Introspection failed: ${message}` : 'Invalid introspection response');
       }
     } catch (err: any) {
-      fetchError.value = err.message || 'Failed to load schema';
-      console.error('Schema fetch failed:', err);
+      fetchError.value = err?.message || 'Failed to load schema';
     } finally {
       isFetching.value = false;
     }
+  };
+
+  const reset = () => {
+    schema.value = null;
+    fetchError.value = null;
+    validationErrors.value = [];
   };
 
   return {
@@ -48,6 +50,7 @@ function schemaStoreSetup() {
     isFetching,
     fetchError,
     introspect,
+    reset,
     validationErrors,
   };
 }

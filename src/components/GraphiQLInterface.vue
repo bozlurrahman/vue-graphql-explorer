@@ -1,18 +1,11 @@
 <!-- src/components/gql/GraphiQLInterface.vue -->
 <script setup lang="ts">
-import { computed, markRaw, ref, toRaw } from 'vue-demi';
+import { ref, watch } from 'vue-demi';
 import '../styles/explorer.css';
 import '../styles/simple-editor.css';
-import {
-  createGraphiQLFetcher,
-  DOC_EXPLORER_PLUGIN,
-  ExplorerPlugin,
-  HISTORY_PLUGIN,
-  TAB_CLASS_PREFIX,
-} from '../lib/explorer';
+import { DOC_EXPLORER_PLUGIN, ExplorerPlugin, HISTORY_PLUGIN, TAB_CLASS_PREFIX } from '../lib/explorer';
 import { useDragResize } from '../composables/useDragResize';
 
-import { SubscriptionClient } from 'subscriptions-transport-ws';
 import ToolTip from './ToolTip.vue';
 import Spinner from './Spinner.vue';
 import HeaderEditor from './HeaderEditor.vue';
@@ -30,6 +23,8 @@ import { useEditorStore } from '../stores/editor';
 import { useExecutionStore } from '../stores/execution';
 import { usePluginStore } from '../stores/plugin';
 import { useSchemaStore } from '../stores/schema';
+import { useExplorerOptions } from '../stores/registry';
+import { useExplorerFetcher } from '../composables/useExplorerFetcher';
 
 const pluginResizeFirstRef = ref<HTMLElement | null>(null);
 const pluginResizeDragBarRef = ref<HTMLElement | null>(null);
@@ -43,59 +38,28 @@ const editorToolsResizeFirstRef = ref<HTMLElement | null>(null);
 const editorToolsResizeDragBarRef = ref<HTMLElement | null>(null);
 const editorToolsResizeSecondRef = ref<HTMLElement | null>(null);
 
+const options = useExplorerOptions();
+
 const editorStore = useEditorStore();
-editorStore.init({});
+editorStore.init({ defaultQuery: options.defaultQuery });
 
-// Temporary props until EXP-04 defines the full public API on GraphqlExplorer.vue.
-const props = defineProps<{
-  url: string;
-  wsUrl?: string;
-}>();
-
-const graphqlUrl = computed(() => props.url);
-
-// Subscriptions run in the browser only. Without `wsUrl`, derive ws(s):// from `url`.
-const websocketUrl = computed(() => {
-  if (props.wsUrl) return props.wsUrl;
-  if (typeof window === 'undefined') return '';
-  const url = new URL(props.url, window.location.href);
-  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  return url.toString();
-});
-
-const legacyWsClient = ref<SubscriptionClient | null>(null);
-
-function getOrCreateLegacyWsClient(): SubscriptionClient {
-  if (legacyWsClient.value) return toRaw(legacyWsClient.value) as SubscriptionClient;
-
-  const client = markRaw(
-    new SubscriptionClient(websocketUrl.value, {
-      reconnect: true,
-      reconnectionAttempts: 10,
-    }),
-  );
-
-  client.onConnected(() => console.log('[legacyWsClient] connected ✅'));
-  client.onDisconnected(() => console.log('[legacyWsClient] disconnected'));
-  client.onError(e => console.log('[legacyWsClient] error:', e));
-  client.onReconnected(() => console.log('[legacyWsClient] reconnected'));
-
-  legacyWsClient.value = client;
-  return client;
-}
-
-const client = getOrCreateLegacyWsClient();
-
+const fetcher = useExplorerFetcher();
 const executionStore = useExecutionStore();
-executionStore.init({
-  fetcher: createGraphiQLFetcher({
-    url: graphqlUrl.value,
-    legacyClient: client,
-  }),
-});
+executionStore.init({ fetcher });
+
 const pluginStore = usePluginStore();
 const schemaStore = useSchemaStore();
-schemaStore.introspect(graphqlUrl.value);
+const refetchSchema = () => schemaStore.introspect(fetcher, { force: true });
+schemaStore.introspect(fetcher);
+
+// A different endpoint or credentials can mean a different schema.
+watch(
+  () => [options.url, options.headers, options.fetcher],
+  () => {
+    schemaStore.reset();
+    refetchSchema();
+  },
+);
 
 pluginStore.plugins = [DOC_EXPLORER_PLUGIN, HISTORY_PLUGIN, ExplorerPlugin];
 
@@ -176,7 +140,7 @@ const toggleEditorTools = () => {
             type="button"
             :disabled="schemaStore.isFetching"
             aria-label="Re-fetch GraphQL schema"
-            @click="schemaStore.introspect(graphqlUrl)"
+            @click="refetchSchema"
           >
             <ReloadIcon :class="{ 'graphiql-spin': schemaStore.isFetching }" aria-hidden="true" />
           </UnStyledButton>

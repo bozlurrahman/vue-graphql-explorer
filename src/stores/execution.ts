@@ -4,7 +4,7 @@ import { print } from 'graphql';
 import { getFragmentDependenciesForAST } from 'graphql-language-service';
 import { defineExplorerStore, type ExplorerStore } from './registry';
 import type { Observable } from 'subscriptions-transport-ws';
-import { ref } from 'vue-demi';
+import { ref, shallowRef } from 'vue-demi';
 import {
   formatError,
   formatResult,
@@ -32,8 +32,9 @@ function executionStoreSetup() {
   const isFetching = ref(false);
   const isSubscribed = ref(false);
   const operationName = ref<string | null>(null);
-  const fetcher = ref<Fetcher | null>(null);
-  const subscription = ref<UnSubscribable | null>(null);
+  const fetcher = shallowRef<Fetcher | null>(null);
+  // Raw: Vue 2's reactive() would rewrite a subscription or iterator object in place.
+  const subscription = shallowRef<UnSubscribable | null>(null);
   const queryIdCounter = ref<number>(0);
 
   function init(options: { fetcher: Fetcher; operationName?: string }): void {
@@ -43,7 +44,6 @@ function executionStoreSetup() {
 
   function stop(): void {
     if (!subscription.value && !isFetching.value) {
-      console.warn('[stop] nothing running — ignoring');
       return;
     }
     queryIdCounter.value++;
@@ -59,7 +59,6 @@ function executionStoreSetup() {
       return;
     }
     if (isFetching.value) {
-      console.warn('[run] already fetching — ignoring');
       return;
     }
     if (subscription.value) {

@@ -61,11 +61,23 @@ How one source serves Vue 2 and Vue 3:
   - ESLint guards against `vue` / `pinia` imports and Vue 3-only APIs.
   - Checked: lint and `vue-tsc` 0 errors, both builds, both playgrounds in headless Chrome against the local
     intelli-app-operations server (query, docs navigation, history, explorer plugin, dialog portal), no console warnings.
-- [ ] **EXP-04 Remove the Nuxt coupling.** Explicit imports and relative paths done in EXP-03; temporary
-  `url` / `wsUrl` props replace `useRoute()` and nuxt's `apiUrl`. Still to do:
-  - props `url` (required), `wsUrl`, `wsProtocol` (`graphql-ws` | `subscriptions-transport-ws`), `headers` (object or
-    function), `fetcher` (overrides the built-in one), `storageKey` (prefix for `localStorage`), `defaultQuery`;
-  - remove the `console.log` calls (or put them behind a `debug` prop).
+- [x] **EXP-04 Remove the Nuxt coupling.** Done 2026-11-19.
+  - Props on `GraphqlExplorer`: `url` (required), `wsUrl`, `wsProtocol` (`graphql-ws` default |
+    `subscriptions-transport-ws`), `headers` (object or function, called per request), `fetcher`, `storageKey`
+    (default `graphiql`), `defaultQuery`. Types in `src/types/public.ts`, exported from the entry.
+  - The props live on the store registry (`useExplorerOptions()`); `src/composables/useExplorerFetcher.ts` reads them
+    per request. Host headers first, header-editor headers on top; the result goes to HTTP and to the websocket
+    connection params. Introspection uses the same fetcher, so admin-only introspection (EXP-11) can work.
+  - The websocket opens on the first subscription only (no client at mount). The schema reloads when `url`,
+    `headers` or `fetcher` change; the reload button forces a refetch (before, it did nothing once a schema was loaded).
+  - Storage: `storageKey` prefix; keys set with Vue `set` / `del` (Vue 2 tracking); the `storage` listener is
+    removed on unmount.
+  - Console: the websocket lifecycle logs, the schema success log and two "ignoring" warnings removed. The remaining
+    `console.error` / `console.warn` report real errors and never print headers.
+  - Checked in headless Chrome, Vue 3 and Vue 2.7, both websocket protocols, against the local server: host header on
+    introspection, queries and `connection_init`; `playground:` storage keys; `defaultQuery` on a fresh tab;
+    subscription reaches the server (auth error, as expected without a token); no websocket at load; no console
+    warnings. Not checked in the browser: prop changes after mount.
 - [ ] **EXP-05 Transport.** Keep both websocket protocols, because the intelli server runs both. When its UPG-02 drops
   `subscriptions-transport-ws`, remove the legacy client from the package in a major version.
 - [ ] **EXP-06 Auth and secrets.**
@@ -99,9 +111,9 @@ How one source serves Vue 2 and Vue 3:
   - (a) the explorer stays dev and staging only, or
   - (b) introspection only for authenticated admin requests (Apollo plugin), off for everyone else.
   - Recommended: (b). Introspection must not become public, because many content operations are public.
-- [ ] **EXP-12 Docs.** Done for this repo 2026-11-19: `docs/PLAN.md`, `CONTRIBUTING.md`, `CLAUDE.md`, README.
-  intelli-app-operations keeps only `CLAUDE.md` (related repositories) and EXP-09 / EXP-11. Still to do: the README
-  usage section (EXP-04 props) and the consumer rule in intelli `docs/CODING-STANDARDS.md` (npm version, no `file:` path).
+- [x] **EXP-12 Docs.** Done 2026-11-19: `docs/PLAN.md`, `CONTRIBUTING.md`, `CLAUDE.md`, README with props. In
+  intelli-app-operations: `CLAUDE.md` (related repositories), EXP-09 / EXP-11 only in its plan, and the consumer rule
+  in `docs/CODING-STANDARDS.md` (npm version range; `npm link` / `file:` never committed). Keep these in step.
 
 ## Exit (1.0.0)
 
@@ -127,7 +139,7 @@ Then update the status table below.
 | EXP-01 | Scaffold: dual build, exports, switch, lint, types, playgrounds | done 2026-11-19 (`4f8a679`) |
 | EXP-02 | Move the explorer source out of nuxt | done 2026-11-19 (`7a10dd8`, `99b44a1`); nuxt copies removed in EXP-09 |
 | EXP-03 | Vue 2.7 + Vue 3 source | done 2026-11-19 (`92f7bdf`) |
-| EXP-04 | Props API, no Nuxt coupling, no console logs | partial (imports, paths, temporary `url` / `wsUrl`) |
+| EXP-04 | Props API, no Nuxt coupling, no console logs | done 2026-11-19 |
 | EXP-05 | Both websocket protocols | todo |
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | todo |
 | EXP-07 | SSR-safe import | todo |
@@ -135,4 +147,4 @@ Then update the status table below.
 | EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | todo (intelli-app-operations) |
 | EXP-10 | Publish from CI with provenance | todo |
 | EXP-11 | Admin-only introspection in production | todo, decision needed (intelli-app-operations) |
-| EXP-12 | Docs | partial |
+| EXP-12 | Docs | done 2026-11-19 |

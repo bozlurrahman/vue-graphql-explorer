@@ -1,10 +1,13 @@
-import { defineExplorerStore, type ExplorerStore } from './registry';
-import { ref } from 'vue-demi';
+import { defineExplorerStore, useExplorerOptions, type ExplorerStore } from './registry';
+import { del as vueDel, onScopeDispose, ref, set as vueSet } from 'vue-demi';
 import type { StorageValue } from '../lib/explorer';
 
-const STORAGE_NAMESPACE = 'graphiql';
+const DEFAULT_NAMESPACE = 'graphiql';
 
 function storageStoreSetup() {
+  // Fixed when the store is created: changing `storageKey` later does not move stored data.
+  const STORAGE_NAMESPACE = useExplorerOptions().storageKey || DEFAULT_NAMESPACE;
+  // Keys are added and removed with vueSet / vueDel: Vue 2 does not track new keys on plain assignment.
   const data = ref<Record<string, StorageValue>>({});
 
   function key(name: string) {
@@ -24,10 +27,10 @@ function storageStoreSetup() {
 
     try {
       const parsed = JSON.parse(raw);
-      data.value[keyName] = parsed;
+      vueSet(data.value, keyName, parsed);
       return parsed;
     } catch {
-      data.value[keyName] = raw;
+      vueSet(data.value, keyName, raw);
       return raw;
     }
   }
@@ -41,7 +44,7 @@ function storageStoreSetup() {
   }
 
   function set(keyName: string, value: StorageValue) {
-    data.value[keyName] = value;
+    vueSet(data.value, keyName, value);
 
     if (!isClient()) return;
 
@@ -54,7 +57,7 @@ function storageStoreSetup() {
   }
 
   function remove(keyName: string) {
-    delete data.value[keyName];
+    vueDel(data.value, keyName);
 
     if (!isClient()) return;
 
@@ -76,22 +79,25 @@ function storageStoreSetup() {
   function syncTabs() {
     if (!isClient()) return;
 
-    window.addEventListener('storage', event => {
+    const onStorage = (event: StorageEvent) => {
       if (!event.key?.startsWith(`${STORAGE_NAMESPACE}:`)) return;
 
       const keyName = event.key.replace(`${STORAGE_NAMESPACE}:`, '');
 
       if (event.newValue === null) {
-        delete data.value[keyName];
+        vueDel(data.value, keyName);
         return;
       }
 
       try {
-        data.value[keyName] = JSON.parse(event.newValue);
+        vueSet(data.value, keyName, JSON.parse(event.newValue));
       } catch {
-        data.value[keyName] = event.newValue;
+        vueSet(data.value, keyName, event.newValue);
       }
-    });
+    };
+    window.addEventListener('storage', onStorage);
+    // The registry's effect scope stops when the explorer unmounts.
+    onScopeDispose(() => window.removeEventListener('storage', onStorage));
   }
 
   if (isClient()) {

@@ -666,7 +666,7 @@ export type Observable<T> = {
   subscribe(observer: { next(value: T): void; error(error: Error): void; complete(): void }): UnSubscribable;
 };
 
-type FetcherResult = ExecutionResult | Observable<ExecutionResult> | AsyncIterable<ExecutionResult>;
+export type FetcherResult = ExecutionResult | Observable<ExecutionResult> | AsyncIterable<ExecutionResult>;
 // export type Fetcher = (params: FetcherParams, opts?: FetcherOpts) => Promise<FetcherResult> | any;
 export type Fetcher = (params: FetcherParams, opts?: FetcherOpts) => Promise<FetcherResult> | FetcherResult;
 // ======================
@@ -1057,10 +1057,12 @@ export type StorageValue = string | number | boolean | object | null;
 
 // utils/tabsUtils.ts
 export function getDefaultTabState({
+  defaultQuery = DEFAULT_QUERY,
   defaultHeaders,
   defaultTabs,
   storedState,
 }: {
+  defaultQuery?: string;
   defaultHeaders?: string;
   defaultTabs?: TabDefinition[];
   storedState: StorageValue;
@@ -1073,16 +1075,16 @@ export function getDefaultTabState({
 
     if (isTabsState(parsed)) {
       if (parsed.activeTabIndex < 0) {
-        const operationName = fuzzyExtractOperationName(DEFAULT_QUERY);
+        const operationName = fuzzyExtractOperationName(defaultQuery);
         parsed.tabs.push({
           id: guid(),
           hash: hashFromTabContents({
-            query: DEFAULT_QUERY,
+            query: defaultQuery,
             variables: null,
             headers: null,
           }),
           title: operationName || DEFAULT_TITLE,
-          query: DEFAULT_QUERY,
+          query: defaultQuery,
           variables: null,
           headers: null,
           operationName,
@@ -1100,7 +1102,7 @@ export function getDefaultTabState({
       tabs: (
         defaultTabs || [
           {
-            query: DEFAULT_QUERY,
+            query: defaultQuery,
             variables: null,
             headers: defaultHeaders,
           },

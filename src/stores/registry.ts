@@ -17,10 +17,13 @@ import {
   type InjectionKey,
   type UnwrapNestedRefs,
 } from 'vue-demi';
+import type { GraphqlExplorerProps } from '../types/public';
 
 export interface ExplorerStores {
   readonly scope: EffectScope;
   readonly stores: Map<string, unknown>;
+  /** The <GraphqlExplorer> props (reactive): read them when used, so prop changes apply. */
+  readonly options: GraphqlExplorerProps;
 }
 
 export const ExplorerStoresKey: InjectionKey<ExplorerStores> = Symbol('vue-graphql-explorer:stores');
@@ -28,8 +31,13 @@ export const ExplorerStoresKey: InjectionKey<ExplorerStores> = Symbol('vue-graph
 // The registry whose stores are being created right now (stores may use other stores during setup).
 let active: ExplorerStores | null = null;
 
-export function createExplorerStores(): ExplorerStores {
-  return { scope: effectScope(true), stores: new Map() };
+export function createExplorerStores(options: GraphqlExplorerProps): ExplorerStores {
+  return { scope: effectScope(true), stores: new Map(), options };
+}
+
+/** The props of the <GraphqlExplorer> that owns the current store registry. */
+export function useExplorerOptions(): GraphqlExplorerProps {
+  return currentRegistry().options;
 }
 
 export function disposeExplorerStores(registry: ExplorerStores): void {

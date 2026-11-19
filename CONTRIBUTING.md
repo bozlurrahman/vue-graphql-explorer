@@ -15,7 +15,7 @@ npm run build       # dist/vue3, dist/vue2, dist/types, then points dist/index.j
   Vue 2 and Vue 3 cannot share one `node_modules` without peer conflicts.
 - Playgrounds: `playground/vue3` and `playground/vue2` (`npm install && npm run dev` in each, after a root build).
   They proxy `/graphql` to `http://localhost:30011` (the intelli-app-operations server); set `VITE_PROXY_TARGET`
-  to use another server.
+  to use another server. `?ws=legacy` in the page URL switches subscriptions to `subscriptions-transport-ws`.
 - Check every change in both playgrounds. The Vue 2 build catches compile problems, but some bugs only show at
   runtime (see the `reactive()` and `h()` rules below).
 - `vitest` is pinned to `~4.0`: `vitest@4.1` makes npm 10.9 crash while building the tree

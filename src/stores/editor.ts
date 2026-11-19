@@ -52,7 +52,11 @@ function editorStoreSetup() {
     ) as ExecutableDefinitionNode[];
   });
 
+  // Query for new tabs: the host's `defaultQuery`, else the built-in welcome text.
+  let defaultQueryForNewTabs = DEFAULT_QUERY;
+
   function init({
+    defaultQuery,
     externalFragments,
     defaultTabs,
     theValidationRules,
@@ -68,8 +72,10 @@ function editorStoreSetup() {
     defaultHeaders?: string;
   }) {
     const storedState = storage?.get(STORAGE_KEY_TABS) ?? null;
+    if (defaultQuery !== undefined) defaultQueryForNewTabs = defaultQuery;
 
     const tabState = getDefaultTabState({
+      defaultQuery: defaultQueryForNewTabs,
       defaultTabs,
       defaultHeaders,
       storedState,
@@ -109,7 +115,7 @@ function editorStoreSetup() {
     externalFragments.value = map;
   }
 
-  function addTab(defaultHeaders?: string, defaultQuery: string = DEFAULT_QUERY) {
+  function addTab(defaultHeaders?: string, defaultQuery: string = defaultQueryForNewTabs) {
     const updatedValues = synchronizeActiveTabValues();
     const newTab = createTab({
       headers: defaultHeaders,

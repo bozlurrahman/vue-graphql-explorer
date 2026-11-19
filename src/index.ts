@@ -4,3 +4,12 @@ import './styles/simple-editor.css';
 
 export { default as GraphqlExplorer } from './components/GraphqlExplorer.vue';
 export { createGraphiQLFetcher } from './lib/explorer';
+export type {
+  Fetcher,
+  FetcherOpts,
+  FetcherParams,
+  FetcherResult,
+  GraphqlExplorerProps,
+  HeadersOption,
+  WsProtocol,
+} from './types/public';
