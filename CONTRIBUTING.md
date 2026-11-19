@@ -6,8 +6,9 @@
 npm run setup       # installs the root (Vue 3) and toolchain/vue2 (Vue 2.7 compiler)
 npm run lint
 npm run typecheck
-npm test
+npm test            # includes the Vue 3 SSR check (test/ssr.test.ts)
 npm run build       # dist/vue3, dist/vue2, dist/types, then points dist/index.js at vue3
+npm run test:ssr:vue2  # after build: imports and server-renders dist/vue2 with Vue 2.7
 ```
 
 - One source in `src/`, two builds. `vite build --mode vue3` uses `@vitejs/plugin-vue`; `--mode vue2` uses
@@ -45,6 +46,8 @@ ESLint enforces most of these (`eslint.config.mjs`); the Vue 2 build and the pla
 - A store that returns an object holding refs it still uses itself wraps it in `markRaw()`: Vue 2's
   `reactive()` converts nested objects in place.
 - CSS: `:deep()` only (no `>>>` or `/deep/`).
+- SSR safety: no `window`, `document`, `navigator` or `localStorage` at module level or in `setup`. Put DOM work in
+  `onMounted` or event handlers. Browser storage only through the storage store (`src/stores/storage.ts`).
 
 ## Releases
 

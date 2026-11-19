@@ -14,14 +14,27 @@ function storageStoreSetup() {
     return `${STORAGE_NAMESPACE}:${name}`;
   }
 
-  function isClient() {
-    return typeof window !== 'undefined';
+  // null during SSR and when the browser blocks storage (sandboxed iframe, cookies disabled): reading
+  // `window.localStorage` then throws a SecurityError. The explorer then keeps its state in memory only.
+  function getLocalStorage(): Storage | null {
+    if (typeof window === 'undefined') return null;
+    try {
+      return window.localStorage ?? null;
+    } catch {
+      return null;
+    }
   }
 
   function load(keyName: string) {
-    if (!isClient()) return null;
+    const ls = getLocalStorage();
+    if (!ls) return null;
 
-    const raw = localStorage.getItem(key(keyName));
+    let raw: string | null;
+    try {
+      raw = ls.getItem(key(keyName));
+    } catch {
+      return null;
+    }
 
     if (raw === null) return null;
 
@@ -46,15 +59,16 @@ function storageStoreSetup() {
   function set(keyName: string, value: StorageValue) {
     vueSet(data.value, keyName, value);
 
-    if (!isClient()) return;
+    const ls = getLocalStorage();
+    if (!ls) return;
 
     if (value === null || value === undefined) {
-      localStorage.removeItem(key(keyName));
+      removeStored(ls, key(keyName));
       return;
     }
 
     try {
-      localStorage.setItem(key(keyName), JSON.stringify(value));
+      ls.setItem(key(keyName), JSON.stringify(value));
     } catch (error) {
       // Quota exceeded or storage blocked: report instead of throwing (history drops old items and retries).
       const isQuotaError = error instanceof DOMException && error.name === 'QuotaExceededError';
@@ -65,25 +79,31 @@ function storageStoreSetup() {
   function remove(keyName: string) {
     vueDel(data.value, keyName);
 
-    if (!isClient()) return;
+    const ls = getLocalStorage();
+    if (ls) removeStored(ls, key(keyName));
+  }
 
-    localStorage.removeItem(key(keyName));
+  function removeStored(ls: Storage, fullKey: string) {
+    try {
+      ls.removeItem(fullKey);
+    } catch {
+      // Storage blocked: nothing stored to remove.
+    }
   }
 
   function clear() {
     data.value = {};
 
-    if (!isClient()) return;
+    const ls = getLocalStorage();
+    if (!ls) return;
 
-    Object.keys(localStorage).forEach(k => {
-      if (k.startsWith(`${STORAGE_NAMESPACE}:`)) {
-        localStorage.removeItem(k);
-      }
+    Object.keys(ls).forEach(k => {
+      if (k.startsWith(`${STORAGE_NAMESPACE}:`)) removeStored(ls, k);
     });
   }
 
   function syncTabs() {
-    if (!isClient()) return;
+    if (typeof window === 'undefined') return;
 
     const onStorage = (event: StorageEvent) => {
       if (!event.key?.startsWith(`${STORAGE_NAMESPACE}:`)) return;
@@ -106,9 +126,7 @@ function storageStoreSetup() {
     onScopeDispose(() => window.removeEventListener('storage', onStorage));
   }
 
-  if (isClient()) {
-    syncTabs();
-  }
+  syncTabs();
 
   return {
     data,

@@ -97,8 +97,16 @@ How one source serves Vue 2 and Vue 3:
     cleaned on load.
   - Open: variables are stored as typed (tabs and history). A login mutation's `password` variable ends up in
     `localStorage`. Decide whether to filter variable names too.
-- [ ] **EXP-07 SSR safety.** No `window`, `document` or `localStorage` access at import or setup time, so the package
+- [x] **EXP-07 SSR safety.** No `window`, `document` or `localStorage` access at import or setup time, so the package
   can be imported in Nuxt 2 and Nuxt 3/4 SSR. The host still renders it client-side only (`<ClientOnly>` / `<client-only>`).
+  - Audit: both builds already imported and server-rendered in plain Node. DOM work sits in `onMounted` or in
+    event handlers; `navigator` and `window` reads at module level were already guarded.
+  - Fix: `src/stores/storage.ts` read `localStorage` without a guard on the client. When the browser blocks storage
+    (sandboxed iframe, cookies disabled), reading it throws a `SecurityError` and setup failed. Every access now goes
+    through `getLocalStorage()`, which returns null on SSR or when storage is blocked; state then stays in memory.
+  - Checks: `test/ssr.test.ts` (Vue 3 source, Vitest `node` environment: import, render with every prop, render
+    with blocked storage) and `npm run test:ssr:vue2` (`scripts/ssr-check-vue2.mjs`: imports `dist/vue2` and renders
+    it with `vue-server-renderer` 2.7.16 from `toolchain/vue2`). EXP-08 CI runs both.
 - [ ] **EXP-08 Tests and CI.**
   - Vitest unit tests for the query builder in `lib/explorer.ts`, the fetcher and the header filter from EXP-06.
   - Component tests with `@vue/test-utils` v2 (Vue 3) and v1 (Vue 2.7): mount, run a query against a mock fetcher,
@@ -154,7 +162,7 @@ Then update the status table below.
 | EXP-04 | Props API, no Nuxt coupling, no console logs | done 2026-11-19 |
 | EXP-05 | Both websocket protocols | todo |
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
-| EXP-07 | SSR-safe import | todo |
+| EXP-07 | SSR-safe import | done 2026-11-19 |
 | EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | todo |
 | EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | todo (intelli-app-operations) |
 | EXP-10 | Publish from CI with provenance | todo |
