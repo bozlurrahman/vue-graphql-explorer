@@ -107,12 +107,22 @@ How one source serves Vue 2 and Vue 3:
   - Checks: `test/ssr.test.ts` (Vue 3 source, Vitest `node` environment: import, render with every prop, render
     with blocked storage) and `npm run test:ssr:vue2` (`scripts/ssr-check-vue2.mjs`: imports `dist/vue2` and renders
     it with `vue-server-renderer` 2.7.16 from `toolchain/vue2`). EXP-08 CI runs both.
-- [ ] **EXP-08 Tests and CI.**
+- [x] **EXP-08 Tests and CI.**
   - Vitest unit tests for the query builder in `lib/explorer.ts`, the fetcher and the header filter from EXP-06.
   - Component tests with `@vue/test-utils` v2 (Vue 3) and v1 (Vue 2.7): mount, run a query against a mock fetcher,
     toggle the doc explorer.
   - GitHub Actions matrix Vue 2.7 and the latest Vue 3: lint, typecheck, tests, build. Bundle-size report.
   - Commit `package-lock.json` (`git add -f`: the global gitignore excludes it) so CI can run `npm ci`.
+  - Done: `test/explorer.test.ts` (query builder, operation names, tab state, incremental delivery, HTTP and
+    legacy-websocket fetcher), `test/fetcher.test.ts` (`headers` prop, websocket URL), `test/component/explorer.test.ts`
+    (one spec, run by `npm test` on Vue 3 and `npm run test:vue2` on Vue 2.7 through the `#mount` adapter).
+    `.github/workflows/ci.yml` runs both legs; `npm run size` writes the bundle sizes to the job summary.
+  - Bug found and fixed: `mergeIncrementalResult` replaced the object at a `@defer` path instead of merging into it,
+    so fields from the initial payload disappeared.
+  - Open, not fixed (upstream GraphiQL behaves the same):
+    - `defaultGetDefaultFieldNames` skips non-null leaf fields (`title: String!`) when it picks default fields.
+    - The websocket sink drops a value when `next` and `complete` arrive in the same tick. Real sockets deliver
+      them in separate tasks.
 - [ ] **EXP-09 Nuxt admin integration** (work in intelli-app-operations).
   - Develop against this repo (`npm link`, or `"file:../../vue-graphql-explorer"` in `nuxt/package.json`). Never
     commit the `file:` path; switch to the npm version range before merging.
@@ -163,7 +173,7 @@ Then update the status table below.
 | EXP-05 | Both websocket protocols | todo |
 | EXP-06 | Token through `headers`; credential headers never persisted or logged | done 2026-11-19 (variables open) |
 | EXP-07 | SSR-safe import | done 2026-11-19 |
-| EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | todo |
+| EXP-08 | Unit and component tests; CI matrix Vue 2.7 / Vue 3; lockfile | done 2026-11-19 |
 | EXP-09 | Nuxt admin uses the npm package at `/admin/explorer` | todo (intelli-app-operations) |
 | EXP-10 | Publish from CI with provenance | todo |
 | EXP-11 | Admin-only introspection in production | todo, decision needed (intelli-app-operations) |

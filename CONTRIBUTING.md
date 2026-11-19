@@ -6,9 +6,11 @@
 npm run setup       # installs the root (Vue 3) and toolchain/vue2 (Vue 2.7 compiler)
 npm run lint
 npm run typecheck
-npm test            # includes the Vue 3 SSR check (test/ssr.test.ts)
+npm test            # Vue 3: unit, SSR (test/ssr.test.ts) and component tests
+npm run test:vue2   # Vue 2.7: the same component tests (toolchain/vue2/vitest.config.mjs)
 npm run build       # dist/vue3, dist/vue2, dist/types, then points dist/index.js at vue3
 npm run test:ssr:vue2  # after build: imports and server-renders dist/vue2 with Vue 2.7
+npm run size        # after build: raw and gzip sizes
 ```
 
 - One source in `src/`, two builds. `vite build --mode vue3` uses `@vitejs/plugin-vue`; `--mode vue2` uses
@@ -21,6 +23,11 @@ npm run test:ssr:vue2  # after build: imports and server-renders dist/vue2 with 
   runtime (see the `reactive()` and `h()` rules below).
 - `vitest` is pinned to `~4.0`: `vitest@4.1` makes npm 10.9 crash while building the tree
   (`Cannot read properties of null (reading 'edgesOut')`).
+- Component tests live in `test/component/` and import `mountExplorer` from `#mount`, which points at
+  `mount-vue3.ts` (VTU v2) or `mount-vue2.ts` (VTU v1). Use only wrapper methods both versions share (`types.ts`).
+- CI (`.github/workflows/ci.yml`) runs a Vue 3 leg (lint, typecheck, `npm test`, build, pack check, size) and a
+  Vue 2.7 leg (build, `test:vue2`, `test:ssr:vue2`). Both lockfiles are committed with `git add -f`, because the
+  global gitignore excludes `package-lock.json`. After changing dependencies, commit the updated lockfile.
 - Work plan and status: `docs/PLAN.md`.
 
 ## Rules for the shared source (Vue 2.7 + Vue 3)

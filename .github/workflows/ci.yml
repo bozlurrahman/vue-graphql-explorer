@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Vue ${{ matrix.vue }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        vue: ['2.7', '3']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            toolchain/vue2/package-lock.json
+
+      - name: Install
+        run: |
+          npm ci
+          npm ci --prefix toolchain/vue2
+
+      # The lockfile pins a Vue 3 version; also test against the newest release.
+      - name: Use the latest Vue 3
+        if: matrix.vue == '3'
+        run: npm install --no-save vue@3
+
+      - name: Lint
+        if: matrix.vue == '3'
+        run: npm run lint
+
+      - name: Typecheck
+        if: matrix.vue == '3'
+        run: npm run typecheck
+
+      - name: Unit, SSR and component tests (Vue 3)
+        if: matrix.vue == '3'
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Component tests (Vue 2.7)
+        if: matrix.vue == '2.7'
+        run: npm run test:vue2
+
+      - name: SSR check (Vue 2.7)
+        if: matrix.vue == '2.7'
+        run: npm run test:ssr:vue2
+
+      - name: Package contents
+        if: matrix.vue == '3'
+        run: npm run pack:check
+
+      - name: Bundle size
+        if: matrix.vue == '3'
+        run: npm run size

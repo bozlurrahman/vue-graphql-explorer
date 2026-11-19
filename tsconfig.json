@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": false,
     "noEmit": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": { "#mount": ["./test/component/mount-vue3.ts"] }
   },
   "include": ["src/**/*.ts", "src/**/*.vue", "test/**/*.ts"]
 }

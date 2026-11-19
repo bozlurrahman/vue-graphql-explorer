@@ -4,8 +4,12 @@
   "description": "Vue 2.7 compiler for the dist/vue2 build. Kept apart from the root so the root can install Vue 3 without peer conflicts. Install with `npm run setup` in the root.",
   "devDependencies": {
     "@vitejs/plugin-vue2": "^2.3.4",
+    "@vue/test-utils": "^1.3.6",
+    "happy-dom": "^21.0.4",
     "vite": "^7.3.8",
+    "vitest": "~4.0.0",
     "vue": "2.7.16",
-    "vue-server-renderer": "2.7.16"
+    "vue-server-renderer": "2.7.16",
+    "vue-template-compiler": "^2.7.16"
   }
 }

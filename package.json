@@ -65,9 +65,11 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write --ignore-path .gitignore .",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "pack:check": "npm pack --dry-run",
-    "test:ssr:vue2": "node ./scripts/ssr-check-vue2.mjs"
+    "test:ssr:vue2": "node ./scripts/ssr-check-vue2.mjs",
+    "test:vue2": "vitest run --config toolchain/vue2/vitest.config.mjs",
+    "size": "node ./scripts/size-report.mjs"
   },
   "peerDependencies": {
     "graphql": "^16.0.0",
@@ -84,10 +86,12 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitejs/plugin-vue": "^6.0.11",
+    "@vue/test-utils": "^2.6.0",
     "eslint": "^10.15.0",
     "eslint-plugin-vue": "^10.12.1",
     "globals": "^17.14.0",
     "graphql": "^16.14.0",
+    "happy-dom": "^21.0.4",
     "prettier": "^3.8.3",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.73.0",

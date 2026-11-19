@@ -1405,6 +1405,18 @@ function setPropertyValueByPath(obj: Record<string, unknown>, path: string, valu
   current[keys[keys.length - 1]!] = value;
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function mergeDeepInto(target: Record<string, unknown>, source: Record<string, unknown>): void {
+  for (const [key, value] of Object.entries(source)) {
+    const current = target[key];
+    if (isPlainObject(current) && isPlainObject(value)) mergeDeepInto(current, value);
+    else target[key] = value;
+  }
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type IncrementalResult = {
@@ -1482,7 +1494,13 @@ export function mergeIncrementalResult(executionResult: IncrementalResult, incre
         path = [...path, ...subPath];
       }
     }
-    setPropertyValueByPath(executionResult as Record<string, unknown>, path.join('.'), data);
+    // Deep-merge: the deferred fragment adds fields to an object that already holds the initial payload.
+    const target = getPropertyByPath(executionResult as Record<string, unknown>, path.join('.'));
+    if (isPlainObject(target)) {
+      mergeDeepInto(target, data);
+    } else {
+      setPropertyValueByPath(executionResult as Record<string, unknown>, path.join('.'), data);
+    }
   }
 
   // ── Errors ─────────────────────────────────────────────────────────────────
